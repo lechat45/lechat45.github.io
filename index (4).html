@@ -1,0 +1,2645 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>iAxium - v21.0 Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            color: #f1f5f9; 
+            height: 100vh; 
+            overflow: hidden; 
+            display: flex; 
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .sidebar { 
+            width: 480px; 
+            height: 100vh; 
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(56, 189, 248, 0.2);
+            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
+            overflow-y: auto; 
+            padding: 2rem; 
+            flex-shrink: 0;
+        }
+        
+        .main-content { 
+            flex: 1; 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            background: transparent;
+            align-items: center; 
+            padding: 2rem;
+            gap: 1.5rem;
+        }
+        
+        .input-dark { 
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(56, 189, 248, 0.25);
+            color: white; 
+            padding: 14px 18px; 
+            border-radius: 12px; 
+            width: 100%; 
+            font-size: 14px; 
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+            outline: none;
+            font-weight: 500;
+        }
+        
+        .input-dark:focus {
+            border-color: rgba(56, 189, 248, 0.6);
+            box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15);
+            background: rgba(15, 23, 42, 0.95);
+        }
+        
+        .input-dark::placeholder {
+            color: rgba(241, 245, 249, 0.5);
+            font-weight: 400;
+        }
+        
+        textarea.input-dark {
+            resize: vertical;
+            min-height: 60px;
+        }
+        
+        #preview-wrapper { 
+            background: linear-gradient(135deg, #000 0%, #0a0a0a 100%);
+            border-radius: 24px; 
+            border: 3px solid rgba(56, 189, 248, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(56, 189, 248, 0.1);
+            overflow: hidden; 
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            height: 100%; 
+            width: 100%; 
+            position: relative;
+        }
+        
+        #preview-wrapper:hover {
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.7), 0 0 50px rgba(56, 189, 248, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .mode-mobile { 
+            width: 390px !important;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        iframe { 
+            width: 100%; 
+            height: 100%; 
+            border: none; 
+        }
+        
+        .card-opt { 
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, rgba(99, 102, 241, 0.08) 100%);
+            backdrop-filter: blur(10px);
+            padding: 20px; 
+            border-radius: 20px; 
+            border: 2px solid rgba(56, 189, 248, 0.2);
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card-opt:hover {
+            border-color: rgba(56, 189, 248, 0.4);
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.12) 0%, rgba(99, 102, 241, 0.12) 100%);
+            transform: translateX(6px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .tab-btn { 
+            padding: 14px 8px; 
+            font-weight: 900;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            opacity: 0.5;
+            flex: 1; 
+            text-center; 
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: transparent;
+            color: #f1f5f9;
+            position: relative;
+        }
+        
+        .tab-btn::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #38bdf8, #6366f1);
+            transform: translateX(-50%);
+            transition: width 0.3s ease;
+        }
+        
+        .tab-btn:hover {
+            opacity: 0.8;
+        }
+        
+        .tab-btn.active { 
+            opacity: 1; 
+            color: #38bdf8;
+            border-bottom-color: transparent;
+        }
+        
+        .tab-btn.active::before {
+            width: 100%;
+        }
+        
+        button {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .header-title {
+            background: linear-gradient(135deg, #38bdf8 0%, #6366f1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: -0.05em;
+        }
+        
+        .export-btn {
+            background: linear-gradient(135deg, #38bdf8 0%, #6366f1 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border: none;
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
+            position: relative;
+        }
+        
+        .export-btn:hover {
+            box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4);
+        }
+        
+        .mode-btn {
+            padding: 10px 20px;
+            background: rgba(56, 189, 248, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1.5px solid rgba(56, 189, 248, 0.3);
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #38bdf8;
+            transition: all 0.3s ease;
+        }
+        
+        .mode-btn:hover {
+            background: rgba(56, 189, 248, 0.2);
+            border-color: rgba(56, 189, 248, 0.5);
+        }
+        
+        .add-btn {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.15) 0%, rgba(99, 102, 241, 0.15) 100%);
+            border: 1.5px solid rgba(56, 189, 248, 0.3);
+            color: #38bdf8;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: all 0.3s ease;
+        }
+        
+        .add-btn:hover {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.25) 0%, rgba(99, 102, 241, 0.25) 100%);
+            border-color: rgba(56, 189, 248, 0.5);
+        }
+        
+        .section-title {
+            font-size: 13px;
+            text-transform: uppercase;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            margin-bottom: 16px;
+            opacity: 0.9;
+            padding-bottom: 8px;
+            border-bottom: 2px solid rgba(56, 189, 248, 0.2);
+        }
+        
+        .label-checkbox {
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 8px;
+            border-radius: 8px;
+        }
+        
+        .label-checkbox:hover {
+            background: rgba(56, 189, 248, 0.1);
+        }
+        
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #38bdf8;
+        }
+        
+        input[type="color"] {
+            cursor: pointer;
+            border: 2px solid rgba(56, 189, 248, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        input[type="color"]:hover {
+            border-color: rgba(56, 189, 248, 0.5);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+        }
+        
+        ::-webkit-scrollbar { 
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.3);
+        }
+        
+        ::-webkit-scrollbar-thumb { 
+            background: linear-gradient(135deg, #38bdf8, #6366f1);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #0ea5e9, #4f46e5);
+        }
+        
+        .tab-pane {
+            animation: fadeIn 0.4s ease;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="flex items-center justify-between mb-4">
+            <h1 class="header-title">iAxium<span style="font-size: 14px; opacity: 0.6; margin-left: 8px;">v21.0</span></h1>
+            <button onclick="copyAndDownloadSite()" class="export-btn">
+                <span style="margin-right: 6px;">📋</span>Copier & Exporter
+            </button>
+        </div>
+
+        <div class="flex gap-2 mb-6">
+            <button onclick="exportConfig()" class="flex-1 py-2 px-4 rounded-xl font-bold text-xs uppercase" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; cursor: pointer; transition: transform 0.2s;">
+                <span style="margin-right: 4px;">💾</span>Sauvegarder
+            </button>
+            <button onclick="importConfig()" class="flex-1 py-2 px-4 rounded-xl font-bold text-xs uppercase" style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; cursor: pointer; transition: transform 0.2s;">
+                <span style="margin-right: 4px;">📥</span>Charger
+            </button>
+            <button onclick="if(confirm('Effacer l\'auto-sauvegarde ?')) { localStorage.removeItem('iaxium_autosave'); showToast('🗑️ Auto-save effacée'); }" class="py-2 px-3 rounded-xl font-bold text-xs" style="background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; cursor: pointer;">
+                🗑️
+            </button>
+        </div>
+
+        <div class="flex gap-2 mb-4">
+            <button id="toggle-auto-render" onclick="toggleAutoRender()" class="flex-1 py-2 px-3 rounded-xl font-bold text-xs uppercase" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; border: none; cursor: pointer;">
+                ⏸️ Mode Manuel
+            </button>
+            <button onclick="forceRender()" class="flex-1 py-2 px-3 rounded-xl font-bold text-xs uppercase" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; cursor: pointer;">
+                🔄 Générer
+            </button>
+        </div>
+        
+        <p style="font-size: 10px; opacity: 0.4; text-align: center; margin-bottom: 12px;">💡 Auto-save toutes les 5s | Mode Manuel = meilleure performance</p>
+
+        <div class="flex mb-6 border-b border-white/10 gap-1">
+            <button onclick="switchTab('design')" class="tab-btn active" id="btn-design">🎨 Design</button>
+            <button onclick="switchTab('content')" class="tab-btn" id="btn-content">📝 Contenu</button>
+            <button onclick="switchTab('config')" class="tab-btn" id="btn-config">⚙️ Configuration</button>
+            <button onclick="switchTab('security')" class="tab-btn" id="btn-security">🔒 Sécurité</button>
+        </div>
+
+        <div id="tab-design" class="tab-pane">
+            <div class="card-opt">
+                <p class="section-title" style="color: #38bdf8;">🎨 Couleurs & Thème</p>
+                <label style="font-size: 11px; opacity: 0.7; margin-bottom: 6px; display: block;">Couleur principale</label>
+                <input type="color" id="theme_color" class="w-full h-12 rounded-lg mb-4 cursor-pointer" value="#0ea5e9" oninput="render()">
+                
+                <label style="font-size: 11px; opacity: 0.7; margin-bottom: 6px; display: block;">Couleur secondaire (boutons, accents)</label>
+                <input type="color" id="secondary_color" class="w-full h-12 rounded-lg mb-4 cursor-pointer" value="#6366f1" oninput="render()">
+                
+                <label style="font-size: 11px; opacity: 0.7; margin-bottom: 6px; display: block;">Couleur texte clair</label>
+                <input type="color" id="text_light_color" class="w-full h-12 rounded-lg mb-4 cursor-pointer" value="#f1f5f9" oninput="render()">
+                
+                <label style="font-size: 11px; opacity: 0.7; margin-bottom: 6px; display: block;">Couleur texte foncé</label>
+                <input type="color" id="text_dark_color" class="w-full h-12 rounded-lg mb-4 cursor-pointer" value="#1e293b" oninput="render()">
+            </div>
+
+            <div class="card-opt">
+                <p class="section-title" style="color: #ec4899;">🖼️ Images & Logo</p>
+                <input type="text" id="logo" class="input-dark" placeholder="🔗 URL Logo" oninput="render()">
+                <input type="text" id="hero_img" class="input-dark" placeholder="🖼️ URL Image Fond Hero" oninput="render()">
+                <input type="text" id="favicon" class="input-dark" placeholder="⭐ URL Favicon (icône onglet)" oninput="render()">
+            </div>
+
+            <div class="card-opt">
+                <p class="section-title" style="color: #10b981;">📝 Textes Principaux</p>
+                <input type="text" id="site_title" class="input-dark" placeholder="🏷️ Titre du site (H1)" oninput="render()">
+                <textarea id="desc" class="input-dark" placeholder="✨ Slogan accrocheur / Description..." oninput="render()"></textarea>
+                <input type="text" id="hero_cta_text" class="input-dark" placeholder="📣 Texte bouton hero principal" value="Passer Commande" oninput="render()">
+            </div>
+
+            <div class="card-opt">
+                <p class="section-title" style="color: #f59e0b;">📞 Contact</p>
+                <input type="text" id="phone" class="input-dark" placeholder="📱 WhatsApp (ex: 33612345678)" oninput="render()">
+            </div>
+        </div>
+
+        <div id="tab-content" class="tab-pane hidden">
+            <div class="card-opt">
+                <p class="section-title" style="color: #10b981;">📦 Services</p>
+                <div id="services-container"></div>
+                <button onclick="addService()" class="add-btn w-full">
+                    <span style="font-size: 16px; margin-right: 8px;">+</span> Ajouter un Service
+                </button>
+            </div>
+
+            <div class="card-opt">
+                <p class="section-title" style="color: #a855f7;">⭐ Avis Clients</p>
+                <div id="avis-container"></div>
+                <button onclick="addAvis()" class="add-btn w-full" style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(147, 51, 234, 0.15) 100%); border-color: rgba(168, 85, 247, 0.3); color: #a855f7;">
+                    <span style="font-size: 16px; margin-right: 8px;">+</span> Ajouter un Avis
+                </button>
+            </div>
+
+            <div class="card-opt">
+                <p class="section-title" style="color: #f59e0b;">📄 Sections Activées</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_stats" onchange="toggleConfig('stats')"> 
+                    <span style="font-weight: 600;">📊 Statistiques (4 chiffres clés)</span>
+                </label>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_pricing" onchange="toggleConfig('pricing')"> 
+                    <span style="font-weight: 600;">💰 Tarifs (3 plans)</span>
+                </label>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_team" onchange="toggleConfig('team')"> 
+                    <span style="font-weight: 600;">👥 Équipe</span>
+                </label>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_gallery" onchange="toggleConfig('gallery')"> 
+                    <span style="font-weight: 600;">🖼️ Galerie Photos</span>
+                </label>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_faq" onchange="toggleConfig('faq')"> 
+                    <span style="font-weight: 600;">❓ FAQ</span>
+                </label>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_cta_banner" onchange="toggleConfig('cta')"> 
+                    <span style="font-weight: 600;">📣 Call-to-Action</span>
+                </label>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_contact_form" onchange="render()"> 
+                    <span style="font-weight: 600;">📧 Formulaire Contact</span>
+                </label>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_map" onchange="toggleConfig('map')"> 
+                    <span style="font-weight: 600;">🗺️ Google Maps</span>
+                </label>
+            </div>
+        </div>
+
+        <div id="tab-config" class="tab-pane hidden">
+            <div class="card-opt">
+                <p class="section-title" style="color: #38bdf8;">💬 Widget Chat</p>
+                <label class="label-checkbox">
+                    <input type="checkbox" id="enable_chat" onchange="handleInput()" checked> 
+                    <span>Activer Chat WhatsApp</span>
+                </label>
+                <input type="text" id="chat_agent_name" class="input-dark" placeholder="👤 Nom de l'agent" value="Valentine" oninput="handleInput()">
+                <input type="text" id="chat_agent_img" class="input-dark" placeholder="🖼️ URL Photo Agent" oninput="handleInput()">
+                <input type="text" id="chat_bd_text" class="input-dark" placeholder="💭 Texte bulle" value="Une question ?" oninput="handleInput()">
+                <textarea id="chat_auto_msg" class="input-dark" placeholder="📨 Message automatique..." oninput="handleInput()">Bonjour ! Comment puis-je vous aider ? 😊</textarea>
+            </div>
+
+            <div class="card-opt">
+                <p class="section-title" style="color: #10b981;">🔍 SEO</p>
+                <input type="text" id="google_analytics" class="input-dark" placeholder="🔍 Google Analytics (G-XXXXXXXXXX)" oninput="handleInput()">
+                <input type="text" id="meta_title" class="input-dark" placeholder="📄 Titre SEO (60 car. max)" oninput="handleInput()">
+                <textarea id="meta_description" class="input-dark" placeholder="📝 Description SEO (160 car. max)..." oninput="handleInput()"></textarea>
+                <input type="text" id="meta_keywords" class="input-dark" placeholder="🏷️ Mots-clés SEO" oninput="handleInput()">
+            </div>
+
+            <div class="card-opt">
+                <p class="section-title" style="color: #3b82f6;">📱 Réseaux Sociaux</p>
+                <input type="text" id="social_facebook" class="input-dark" placeholder="🔗 Facebook URL" oninput="handleInput()">
+                <input type="text" id="social_instagram" class="input-dark" placeholder="📸 Instagram URL" oninput="handleInput()">
+                <input type="text" id="social_twitter" class="input-dark" placeholder="🐦 Twitter/X URL" oninput="handleInput()">
+                <input type="text" id="social_linkedin" class="input-dark" placeholder="💼 LinkedIn URL" oninput="handleInput()">
+            </div>
+
+            <div class="card-opt">
+                <p class="section-title" style="color: #ec4899;">📧 Contact</p>
+                <input type="text" id="contact_email" class="input-dark" placeholder="📧 Email" oninput="handleInput()">
+                <input type="text" id="contact_address" class="input-dark" placeholder="📍 Adresse" oninput="handleInput()">
+                <input type="text" id="contact_phone" class="input-dark" placeholder="☎️ Téléphone" oninput="handleInput()">
+            </div>
+
+            <div class="card-opt">
+                <p class="section-title" style="color: #f59e0b;">⚙️ Options</p>
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_darkmode" onchange="handleInput()" checked> 
+                    <span>🌙 Bouton Nuit/Jour</span>
+                </label>
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_scroll" onchange="handleInput()" checked> 
+                    <span>✨ Animations Scroll</span>
+                </label>
+                <label class="label-checkbox">
+                    <input type="checkbox" id="maintenance" onchange="handleInput()"> 
+                    <span>🚧 Mode Maintenance</span>
+                </label>
+            </div>
+        </div>
+
+        <div id="tab-security" class="tab-pane hidden">
+            <div class="card-opt">
+                <p class="section-title" style="color: #38bdf8;">🚀 Fonctionnalités Avancées</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_cookie_banner" onchange="render()"> 
+                    <span style="font-weight: 600;">Bannière Cookies (RGPD)</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Affiche une bannière de consentement conforme RGPD</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_backtotop" onchange="render()" checked> 
+                    <span style="font-weight: 600;">Bouton Retour en Haut</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Bouton flottant apparaissant au scroll pour remonter</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_preloader" onchange="render()"> 
+                    <span style="font-weight: 600;">Animation de Chargement</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Loader animé au lancement du site</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_countdown" onchange="toggleConfig('countdown')"> 
+                    <span style="font-weight: 600;">Compte à Rebours</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Bannière avec compte à rebours en haut du site (offres limitées)</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_smooth_scroll" onchange="render()"> 
+                    <span style="font-weight: 600;">Défilement Fluide</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Active le défilement doux sur tous les liens d'ancrage</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_lazy_load" onchange="render()" checked> 
+                    <span style="font-weight: 600;">Chargement Progressif Images</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Optimise le temps de chargement en chargeant les images à la demande</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_auto_copyright" onchange="render()" checked> 
+                    <span style="font-weight: 600;">Copyright Automatique</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Ajoute © 2025 + année courante automatiquement</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_compress_css" onchange="render()" checked> 
+                    <span style="font-weight: 600;">Minification CSS</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Réduit la taille du code CSS pour un chargement plus rapide</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_high_contrast" onchange="render()"> 
+                    <span style="font-weight: 600;">Mode Contraste Élevé</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Améliore l'accessibilité pour les personnes malvoyantes</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_focus_visible" onchange="render()" checked> 
+                    <span style="font-weight: 600;">Indicateurs de Focus</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Affiche des bordures visibles sur les éléments focusés (accessibilité clavier)</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_hsts" onchange="render()" checked> 
+                    <span style="font-weight: 600;">HSTS - Force HTTPS</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Force les connexions HTTPS uniquement (Strict-Transport-Security)</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_honeypot" onchange="render()" checked> 
+                    <span style="font-weight: 600;">Honeypot Anti-Spam</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Champ invisible qui piège les robots de spam</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_open_graph" onchange="render()" checked> 
+                    <span style="font-weight: 600;">Open Graph (Réseaux Sociaux)</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Optimise l'affichage lors du partage sur Facebook/Twitter/LinkedIn</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_schema" onchange="render()" checked> 
+                    <span style="font-weight: 600;">Schema.org (SEO)</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Données structurées pour Google (LocalBusiness)</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_sitemap" onchange="render()" checked> 
+                    <span style="font-weight: 600;">Sitemap XML</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Génère balise pour sitemap.xml (aide au référencement)</p>
+            </div>
+
+            <div class="card-opt">
+                <p class="section-title" style="color: #f59e0b;">🎨 Personnalisation Avancée</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_custom_fonts" onchange="render()"> 
+                    <span style="font-weight: 600;">Polices Personnalisées</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Permet de choisir d'autres polices Google Fonts</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_gradient_bg" onchange="render()"> 
+                    <span style="font-weight: 600;">Arrière-plan Gradient Animé</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Fond avec dégradé de couleurs en mouvement</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_rounded_design" onchange="render()" checked> 
+                    <span style="font-weight: 600;">Design Arrondi</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Bordures arrondies sur tous les éléments (moderne)</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_parallax" onchange="render()"> 
+                    <span style="font-weight: 600;">Effet Parallaxe</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">L'arrière-plan se déplace moins vite que le contenu</p>
+            </div>
+
+            <div class="card-opt">
+                <p class="section-title" style="color: #ec4899;">🎭 Effets Visuels</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_cursor_trail" onchange="render()"> 
+                    <span style="font-weight: 600;">Traînée de Curseur</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Effet lumineux qui suit le curseur de la souris</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_particles" onchange="render()"> 
+                    <span style="font-weight: 600;">Particules Flottantes</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Particules animées en arrière-plan du hero</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_glass_morphism" onchange="render()" checked> 
+                    <span style="font-weight: 600;">Glassmorphism</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Effet verre dépoli sur cartes et sections (déjà actif)</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_hover_3d" onchange="render()"> 
+                    <span style="font-weight: 600;">Effet 3D au Survol</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Cartes qui s'inclinent au survol de la souris</p>
+            </div>
+
+            <div class="card-opt">
+                <p class="section-title" style="color: #8b5cf6;">🔧 Fonctionnalités Techniques</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_pwa" onchange="render()"> 
+                    <span style="font-weight: 600;">PWA (Progressive Web App)</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Permet d'installer le site comme une app mobile</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_service_worker" onchange="render()"> 
+                    <span style="font-weight: 600;">Service Worker (Cache)</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Mode hors ligne et mise en cache automatique</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_print_css" onchange="render()"> 
+                    <span style="font-weight: 600;">Optimisation Impression</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">CSS spécial pour impression papier</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_share_api" onchange="render()"> 
+                    <span style="font-weight: 600;">Bouton Partage Natif</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Utilise l'API de partage du navigateur mobile</p>
+            </div>
+
+            <div class="card-opt">
+                <p class="section-title" style="color: #10b981;">📱 Options Mobile</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_mobile_menu" onchange="render()" checked> 
+                    <span style="font-weight: 600;">Menu Hamburger Mobile</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Menu déroulant automatique sur petits écrans</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_touch_gestures" onchange="render()"> 
+                    <span style="font-weight: 600;">Gestes Tactiles</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Swipe pour naviguer dans galerie et avis</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_mobile_fixed_cta" onchange="render()"> 
+                    <span style="font-weight: 600;">CTA Fixe Mobile</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Bouton d'action fixé en bas sur mobile</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_responsive_images" onchange="render()" checked> 
+                    <span style="font-weight: 600;">Images Responsives</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Images adaptées à la taille d'écran (srcset)</p>
+            </div>
+
+            <div class="card-opt">
+                <p class="section-title" style="color: #06b6d4;">🌐 Intégrations Tierces</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_messenger" onchange="toggleConfig('messenger')"> 
+                    <span style="font-weight: 600;">Facebook Messenger</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Widget de chat Messenger en bas à droite</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_tawk" onchange="toggleConfig('tawk')"> 
+                    <span style="font-weight: 600;">Tawk.to Chat</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Chat en direct gratuit pour support client</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_mailchimp" onchange="toggleConfig('mailchimp')"> 
+                    <span style="font-weight: 600;">Mailchimp Newsletter</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Formulaire d'inscription newsletter intégré</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_calendly" onchange="toggleConfig('calendly')"> 
+                    <span style="font-weight: 600;">Calendly Rendez-vous</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Système de prise de rendez-vous en ligne</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_trustpilot" onchange="toggleConfig('trustpilot')"> 
+                    <span style="font-weight: 600;">Trustpilot Avis</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Widget d'avis Trustpilot certifiés</p>
+            </div>
+
+            <div class="card-opt">
+                <p class="section-title" style="color: #a855f7;">📄 Sections du Site</p>
+
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_stats" onchange="toggleConfig('stats')"> 
+                    <span style="font-weight: 600;">Statistiques/Chiffres Clés</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Grille de 4 statistiques impressionnantes (clients, projets, satisfaction...)</p>
+
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_pricing" onchange="toggleConfig('pricing')"> 
+                    <span style="font-weight: 600;">Section Tarifs</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">3 plans tarifaires personnalisables avec fonctionnalités</p>
+
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_team" onchange="toggleConfig('team')"> 
+                    <span style="font-weight: 600;">Section Équipe</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Présentation des membres de votre équipe avec photos</p>
+
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_gallery" onchange="toggleConfig('gallery')"> 
+                    <span style="font-weight: 600;">Galerie Photos</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Grille responsive d'images avec effet hover</p>
+
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_faq" onchange="toggleConfig('faq')"> 
+                    <span style="font-weight: 600;">Section FAQ</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Questions fréquentes avec réponses détaillées</p>
+
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_cta_banner" onchange="toggleConfig('cta')"> 
+                    <span style="font-weight: 600;">Bannière Call-to-Action</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Bloc d'appel à l'action pour convertir vos visiteurs</p>
+
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_contact_form" onchange="render()"> 
+                    <span style="font-weight: 600;">Formulaire de Contact</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Formulaire complet : nom, email, téléphone, message</p>
+
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_map" onchange="toggleConfig('map')"> 
+                    <span style="font-weight: 600;">Carte Google Maps</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Intégration de votre position géographique</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_testimonials_carousel" onchange="render()"> 
+                    <span style="font-weight: 600;">Carrousel Avis Auto</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Défilement automatique des avis clients (5 secondes)</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_breadcrumb" onchange="render()"> 
+                    <span style="font-weight: 600;">Fil d'Ariane (Breadcrumb)</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Affiche Accueil > Section actuelle (navigation + SEO)</p>
+                
+                <label class="label-checkbox">
+                    <input type="checkbox" id="opt_sticky_header" onchange="render()" checked> 
+                    <span style="font-weight: 600;">Menu Fixe (Sticky)</span>
+                </label>
+                <p style="font-size: 11px; opacity: 0.5; margin-bottom: 12px; margin-left: 32px; line-height: 1.4;">Menu reste visible lors du défilement</p>
+            </div>
+
+            <div class="card-opt" id="countdown-config" style="display: none; border-color: rgba(251, 191, 36, 0.3);">
+                <p class="section-title" style="color: #fbbf24;">⏱️ Configuration Compte à Rebours</p>
+                <label style="font-size: 12px; opacity: 0.7; margin-bottom: 6px; display: block; font-weight: 600;">Texte affiché</label>
+                <input type="text" id="countdown_text" class="input-dark" placeholder="Texte (ex: Offre limitée)" value="Offre limitée !" oninput="render()">
+                <label style="font-size: 12px; opacity: 0.7; margin-bottom: 6px; display: block; font-weight: 600;">Date et heure de fin</label>
+                <input type="datetime-local" id="countdown_date" class="input-dark" oninput="render()">
+            </div>
+
+            <div class="card-opt" id="stats-config" style="display: none; border-color: rgba(34, 197, 94, 0.3);">
+                <p class="section-title" style="color: #22c55e;">📊 Configuration Statistiques</p>
+                <div style="margin-bottom: 16px; padding: 14px; background: rgba(34, 197, 94, 0.05); border-radius: 12px; border: 1px solid rgba(34, 197, 94, 0.1);">
+                    <label style="font-size: 11px; opacity: 0.7; display: block; margin-bottom: 6px; font-weight: 700; color: #22c55e;">📈 Statistique 1</label>
+                    <input type="text" id="stat1_number" class="input-dark" placeholder="Nombre (ex: 500+)" value="500+" oninput="render()">
+                    <input type="text" id="stat1_label" class="input-dark" placeholder="Label (ex: Clients)" value="Clients" oninput="render()">
+                </div>
+                <div style="margin-bottom: 16px; padding: 14px; background: rgba(34, 197, 94, 0.05); border-radius: 12px; border: 1px solid rgba(34, 197, 94, 0.1);">
+                    <label style="font-size: 11px; opacity: 0.7; display: block; margin-bottom: 6px; font-weight: 700; color: #22c55e;">📈 Statistique 2</label>
+                    <input type="text" id="stat2_number" class="input-dark" placeholder="Nombre" value="1000+" oninput="render()">
+                    <input type="text" id="stat2_label" class="input-dark" placeholder="Label" value="Projets" oninput="render()">
+                </div>
+                <div style="margin-bottom: 16px; padding: 14px; background: rgba(34, 197, 94, 0.05); border-radius: 12px; border: 1px solid rgba(34, 197, 94, 0.1);">
+                    <label style="font-size: 11px; opacity: 0.7; display: block; margin-bottom: 6px; font-weight: 700; color: #22c55e;">📈 Statistique 3</label>
+                    <input type="text" id="stat3_number" class="input-dark" placeholder="Nombre" value="98%" oninput="render()">
+                    <input type="text" id="stat3_label" class="input-dark" placeholder="Label" value="Satisfaction" oninput="render()">
+                </div>
+                <div style="padding: 14px; background: rgba(34, 197, 94, 0.05); border-radius: 12px; border: 1px solid rgba(34, 197, 94, 0.1);">
+                    <label style="font-size: 11px; opacity: 0.7; display: block; margin-bottom: 6px; font-weight: 700; color: #22c55e;">📈 Statistique 4</label>
+                    <input type="text" id="stat4_number" class="input-dark" placeholder="Nombre" value="5★" oninput="render()">
+                    <input type="text" id="stat4_label" class="input-dark" placeholder="Label" value="Note Moyenne" oninput="render()">
+                </div>
+            </div>
+
+            <div class="card-opt" id="cta-config" style="display: none; border-color: rgba(249, 115, 22, 0.3);">
+                <p class="section-title" style="color: #f97316;">🎯 Configuration Call-to-Action</p>
+                <label style="font-size: 12px; opacity: 0.7; margin-bottom: 6px; display: block; font-weight: 600;">Titre principal</label>
+                <input type="text" id="cta_title" class="input-dark" placeholder="Titre principal" value="Prêt à Commencer ?" oninput="render()">
+                <label style="font-size: 12px; opacity: 0.7; margin-bottom: 6px; display: block; font-weight: 600;">Description</label>
+                <textarea id="cta_text" class="input-dark" placeholder="Description" oninput="render()">Rejoignez des centaines de clients satisfaits dès aujourd'hui</textarea>
+                <label style="font-size: 12px; opacity: 0.7; margin-bottom: 6px; display: block; font-weight: 600;">Texte du bouton</label>
+                <input type="text" id="cta_button" class="input-dark" placeholder="Texte du bouton" value="Contactez-nous" oninput="render()">
+            </div>
+
+            <div class="card-opt" id="pricing-config" style="display: none; border-color: rgba(168, 85, 247, 0.3);">
+                <p class="section-title" style="color: #a855f7;">💰 Configuration Tarifs</p>
+                <div style="margin-bottom: 18px; padding: 16px; background: linear-gradient(135deg, rgba(168, 85, 247, 0.08) 0%, rgba(147, 51, 234, 0.08) 100%); border-radius: 14px; border: 2px solid rgba(168, 85, 247, 0.2);">
+                    <label style="font-size: 12px; font-weight: 700; display: block; margin-bottom: 10px; color: #a855f7;">💎 Plan 1 (Basique)</label>
+                    <label style="font-size: 11px; opacity: 0.7; margin-bottom: 4px; display: block; font-weight: 600;">Nom du plan</label>
+                    <input type="text" id="price1_name" class="input-dark" placeholder="Nom du plan" value="STARTER" oninput="render()">
+                    <label style="font-size: 11px; opacity: 0.7; margin-bottom: 4px; display: block; font-weight: 600;">Prix</label>
+                    <input type="text" id="price1_price" class="input-dark" placeholder="Prix (ex: 49€)" value="49€" oninput="render()">
+                    <label style="font-size: 11px; opacity: 0.7; margin-bottom: 4px; display: block; font-weight: 600;">Fonctionnalités (une par ligne)</label>
+                    <textarea id="price1_features" class="input-dark" style="min-height: 100px;" placeholder="Fonctionnalités (une par ligne)" oninput="render()">Service de base
+Support 24/7
+1 mois gratuit</textarea>
+                </div>
+                <div style="margin-bottom: 18px; padding: 16px; background: linear-gradient(135deg, rgba(56, 189, 248, 0.12) 0%, rgba(99, 102, 241, 0.12) 100%); border-radius: 14px; border: 2px solid rgba(56, 189, 248, 0.3);">
+                    <label style="font-size: 12px; font-weight: 700; display: block; margin-bottom: 10px; color: #38bdf8;">⭐ Plan 2 (Recommandé)</label>
+                    <label style="font-size: 11px; opacity: 0.7; margin-bottom: 4px; display: block; font-weight: 600;">Nom du plan</label>
+                    <input type="text" id="price2_name" class="input-dark" placeholder="Nom du plan" value="PRO" oninput="render()">
+                    <label style="font-size: 11px; opacity: 0.7; margin-bottom: 4px; display: block; font-weight: 600;">Prix</label>
+                    <input type="text" id="price2_price" class="input-dark" placeholder="Prix" value="99€" oninput="render()">
+                    <label style="font-size: 11px; opacity: 0.7; margin-bottom: 4px; display: block; font-weight: 600;">Fonctionnalités (une par ligne)</label>
+                    <textarea id="price2_features" class="input-dark" style="min-height: 100px;" placeholder="Fonctionnalités (une par ligne)" oninput="render()">Tous les services
+Support prioritaire
+3 mois gratuits</textarea>
+                </div>
+                <div style="padding: 16px; background: linear-gradient(135deg, rgba(168, 85, 247, 0.08) 0%, rgba(147, 51, 234, 0.08) 100%); border-radius: 14px; border: 2px solid rgba(168, 85, 247, 0.2);">
+                    <label style="font-size: 12px; font-weight: 700; display: block; margin-bottom: 10px; color: #a855f7;">👑 Plan 3 (Premium)</label>
+                    <label style="font-size: 11px; opacity: 0.7; margin-bottom: 4px; display: block; font-weight: 600;">Nom du plan</label>
+                    <input type="text" id="price3_name" class="input-dark" placeholder="Nom du plan" value="PREMIUM" oninput="render()">
+                    <label style="font-size: 11px; opacity: 0.7; margin-bottom: 4px; display: block; font-weight: 600;">Prix</label>
+                    <input type="text" id="price3_price" class="input-dark" placeholder="Prix" value="199€" oninput="render()">
+                    <label style="font-size: 11px; opacity: 0.7; margin-bottom: 4px; display: block; font-weight: 600;">Fonctionnalités (une par ligne)</label>
+                    <textarea id="price3_features" class="input-dark" style="min-height: 100px;" placeholder="Fonctionnalités (une par ligne)" oninput="render()">Services illimités
+Support VIP
+6 mois gratuits</textarea>
+                </div>
+            </div>
+
+            <div class="card-opt" id="team-config" style="display: none;">
+                <p class="section-title">👥 Configuration Équipe</p>
+                <div id="team-container"></div>
+                <button onclick="addTeamMember()" class="add-btn w-full" style="margin-top: 10px;">
+                    <span style="font-size: 16px; margin-right: 8px;">+</span> Ajouter un Membre
+                </button>
+            </div>
+
+            <div class="card-opt" id="faq-config" style="display: none;">
+                <p class="section-title">❓ Configuration FAQ</p>
+                <div id="faq-container"></div>
+                <button onclick="addFaqItem()" class="add-btn w-full" style="margin-top: 10px;">
+                    <span style="font-size: 16px; margin-right: 8px;">+</span> Ajouter une Question
+                </button>
+            </div>
+
+            <div class="card-opt" id="gallery-config" style="display: none;">
+                <p class="section-title">🖼️ Configuration Galerie</p>
+                <div id="gallery-container"></div>
+                <button onclick="addGalleryImage()" class="add-btn w-full" style="margin-top: 10px;">
+                    <span style="font-size: 16px; margin-right: 8px;">+</span> Ajouter une Image
+                </button>
+            </div>
+
+            <div class="card-opt" id="map-config" style="display: none;">
+                <p class="section-title">🗺️ Configuration Carte</p>
+                <p style="font-size: 11px; opacity: 0.6; margin-bottom: 10px;">Allez sur Google Maps, cliquez sur "Partager" → "Intégrer une carte" et copiez le code</p>
+                <textarea id="map_embed" class="input-dark" placeholder='<iframe src="https://www.google.com/maps/embed?pb=..." ...></iframe>' oninput="render()"></textarea>
+            </div>
+
+            <div class="card-opt" id="messenger-config" style="display: none;">
+                <p class="section-title">💬 Facebook Messenger</p>
+                <p style="font-size: 11px; opacity: 0.6; margin-bottom: 10px;">Entrez votre Page ID Facebook</p>
+                <input type="text" id="messenger_page_id" class="input-dark" placeholder="Votre Facebook Page ID" oninput="render()">
+            </div>
+
+            <div class="card-opt" id="tawk-config" style="display: none;">
+                <p class="section-title">💬 Tawk.to Chat</p>
+                <p style="font-size: 11px; opacity: 0.6; margin-bottom: 10px;">Entrez votre ID de propriété Tawk.to</p>
+                <input type="text" id="tawk_property_id" class="input-dark" placeholder="ex: 5f4b2c3d4e5a6b7c8d9e0f1a" oninput="render()">
+            </div>
+
+            <div class="card-opt" id="mailchimp-config" style="display: none;">
+                <p class="section-title">📧 Mailchimp Newsletter</p>
+                <p style="font-size: 11px; opacity: 0.6; margin-bottom: 10px;">URL d'action de votre formulaire Mailchimp</p>
+                <input type="text" id="mailchimp_action" class="input-dark" placeholder="https://XXXX.list-manage.com/subscribe/post?u=..." oninput="render()">
+            </div>
+
+            <div class="card-opt" id="calendly-config" style="display: none;">
+                <p class="section-title">📅 Calendly</p>
+                <p style="font-size: 11px; opacity: 0.6; margin-bottom: 10px;">Votre URL Calendly personnalisée</p>
+                <input type="text" id="calendly_url" class="input-dark" placeholder="https://calendly.com/votre-nom" oninput="render()">
+            </div>
+
+            <div class="card-opt" id="trustpilot-config" style="display: none;">
+                <p class="section-title">⭐ Trustpilot</p>
+                <p style="font-size: 11px; opacity: 0.6; margin-bottom: 10px;">Nom de domaine de votre entreprise sur Trustpilot</p>
+                <input type="text" id="trustpilot_domain" class="input-dark" placeholder="ex: www.votresite.com" oninput="render()">
+            </div>
+
+            <div class="card-opt">
+                <p class="section-title">📱 Réseaux Sociaux</p>
+                <input type="text" id="social_facebook" class="input-dark" placeholder="🔗 Facebook URL" oninput="render()">
+                <input type="text" id="social_instagram" class="input-dark" placeholder="📸 Instagram URL" oninput="render()">
+                <input type="text" id="social_twitter" class="input-dark" placeholder="🐦 Twitter/X URL" oninput="render()">
+                <input type="text" id="social_linkedin" class="input-dark" placeholder="💼 LinkedIn URL" oninput="render()">
+                <input type="text" id="social_tiktok" class="input-dark" placeholder="🎵 TikTok URL" oninput="render()">
+                <input type="text" id="social_youtube" class="input-dark" placeholder="📺 YouTube URL" oninput="render()">
+            </div>
+
+            <div class="card-opt">
+                <p class="section-title">📊 Tracking & SEO</p>
+                <input type="text" id="google_analytics" class="input-dark" placeholder="🔍 Google Analytics ID (ex: G-XXXXXXXXXX)" oninput="render()">
+                <input type="text" id="meta_title" class="input-dark" placeholder="📄 Titre de la page" oninput="render()">
+                <textarea id="meta_description" class="input-dark" placeholder="📝 Description SEO (max 160 caractères)" oninput="render()"></textarea>
+                <input type="text" id="meta_keywords" class="input-dark" placeholder="🔑 Mots-clés (séparés par des virgules)" oninput="render()">
+            </div>
+
+            <div class="card-opt">
+                <p class="section-title">📧 Informations de Contact</p>
+                <input type="email" id="contact_email" class="input-dark" placeholder="📧 Email de contact" oninput="render()">
+                <input type="text" id="contact_address" class="input-dark" placeholder="📍 Adresse physique" oninput="render()">
+                <input type="text" id="contact_phone_display" class="input-dark" placeholder="📞 Téléphone (affichage)" oninput="render()">
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="flex gap-3">
+            <button onclick="setMode('mobile')" class="mode-btn">
+                📱 Mobile
+            </button>
+            <button onclick="setMode('desktop')" class="mode-btn">
+                🖥️ Desktop
+            </button>
+        </div>
+        <div id="preview-wrapper"><iframe id="preview-frame" sandbox="allow-scripts allow-same-origin"></iframe></div>
+    </div>
+
+    <script>
+        const days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
+        
+        // Popup de licence au chargement
+        window.addEventListener('DOMContentLoaded', () => {
+            const licenseAccepted = localStorage.getItem('iaxium_license_accepted');
+            if (!licenseAccepted) {
+                setTimeout(showLicensePopup, 100);
+            } else {
+                initializeApp();
+            }
+        });
+        
+        function showLicensePopup() {
+            const popup = document.createElement('div');
+            popup.id = 'license-popup';
+            popup.style.cssText = 'position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 99999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px);';
+            popup.innerHTML = `
+                <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 40px; border-radius: 24px; max-width: 600px; border: 2px solid rgba(56, 189, 248, 0.3); box-shadow: 0 25px 50px rgba(0,0,0,0.5);">
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <div style="font-size: 48px; margin-bottom: 16px;">⚖️</div>
+                        <h2 style="font-size: 28px; font-weight: 900; background: linear-gradient(135deg, #38bdf8, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px;">iAxium v21.0</h2>
+                        <p style="font-size: 12px; opacity: 0.6; text-transform: uppercase; letter-spacing: 2px;">Générateur de Sites Web</p>
+                    </div>
+                    
+                    <div style="background: rgba(56, 189, 248, 0.05); padding: 24px; border-radius: 16px; border: 1px solid rgba(56, 189, 248, 0.2); margin-bottom: 24px; max-height: 300px; overflow-y: auto;">
+                        <h3 style="font-size: 14px; font-weight: 700; margin-bottom: 16px; color: #38bdf8;">📜 Conditions d'Utilisation</h3>
+                        <div style="font-size: 13px; line-height: 1.8; opacity: 0.8; text-align: left;">
+                            <p style="margin-bottom: 12px;">✓ <strong>Licence :</strong> Code source propriétaire © Sacha Pellerin</p>
+                            <p style="margin-bottom: 12px;">✓ <strong>Usage :</strong> Les sites générés vous appartiennent</p>
+                            <p style="margin-bottom: 12px;">✓ <strong>Crédit obligatoire :</strong> La ligne "Design par iAxium & design" doit rester dans le footer</p>
+                            <p style="margin-bottom: 12px;">✓ <strong>Interdiction :</strong> Revente, redistribution ou modification du générateur</p>
+                            <p style="margin-bottom: 12px;">✓ <strong>Support :</strong> sacha.pellerin.45@gmail.com</p>
+                            <p style="margin-top: 16px; padding: 12px; background: rgba(251, 191, 36, 0.1); border-left: 3px solid #fbbf24; border-radius: 6px; font-size: 12px;">
+                                ⚠️ Le retrait de la ligne de crédit est <strong>strictement interdit</strong> et constitue une violation de licence.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 12px;">
+                        <button id="decline-btn" style="flex: 1; padding: 16px; background: rgba(239, 68, 68, 0.2); border: 2px solid #ef4444; color: #ef4444; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 13px; transition: all 0.3s;">
+                            ❌ Refuser
+                        </button>
+                        <button id="accept-btn" style="flex: 2; padding: 16px; background: linear-gradient(135deg, #38bdf8, #6366f1); border: none; color: white; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 13px; box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4); transition: all 0.3s;">
+                            ✓ J'accepte les conditions
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(popup);
+            
+            // Ajouter les event listeners
+            const acceptBtn = document.getElementById('accept-btn');
+            const declineBtn = document.getElementById('decline-btn');
+            
+            if (acceptBtn) {
+                acceptBtn.addEventListener('click', function() {
+                    localStorage.setItem('iaxium_license_accepted', 'true');
+                    const popup = document.getElementById('license-popup');
+                    if (popup) popup.remove();
+                    initializeApp();
+                    showToast('✅ Licence acceptée ! Bienvenue sur iAxium');
+                });
+            }
+            
+            if (declineBtn) {
+                declineBtn.addEventListener('click', function() {
+                    if (confirm('⚠️ Vous devez accepter les conditions pour utiliser iAxium. Voulez-vous vraiment quitter ?')) {
+                        window.location.href = 'about:blank';
+                    }
+                });
+            }
+        }
+        
+        function initializeApp() {
+            // L'application démarre ici
+            render();
+        }
+        
+        // FONCTION DE SÉCURITÉ : Échappement HTML pour prévenir XSS
+        const _0x5a3f = (text) => {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        };
+        const escapeHtml = _0x5a3f;
+        
+        // FONCTION DE SÉCURITÉ : Validation et nettoyage des URLs
+        const _0x7b2e = (url) => {
+            if (!url || typeof url !== 'string') return '';
+            url = url.trim();
+            
+            const allowedProtocols = ['http:', 'https:', 'mailto:', 'tel:'];
+            const dangerousProtocols = [
+                'javascript:', 'data:', 'vbscript:', 'file:', 'about:',
+                'blob:', 'ws:', 'wss:', 'ftp:', 'ftps:', 'content:', 'intent:'
+            ];
+            
+            const lowerUrl = url.toLowerCase();
+            for (let proto of dangerousProtocols) {
+                if (lowerUrl.startsWith(proto) || lowerUrl.includes(':' + proto)) return '';
+            }
+            
+            if (url.includes(':')) {
+                let hasValidProtocol = false;
+                for (let proto of allowedProtocols) {
+                    if (lowerUrl.startsWith(proto)) {
+                        hasValidProtocol = true;
+                        break;
+                    }
+                }
+                if (!hasValidProtocol) return '';
+            }
+            
+            if (url.includes('%00') || url.includes('\x00') || url.includes('\\x')) return '';
+            if (url.includes('<') || url.includes('>') || url.includes('"') || url.includes("'")) return '';
+            url = url.replace(/[\x00-\x1F\x7F]/g, '');
+            
+            return url;
+        };
+        const sanitizeUrl = _0x7b2e;
+        
+        // FONCTION DE SÉCURITÉ : Validation du numéro de téléphone
+        const _0x9c4d = (phone) => {
+            if (!phone || typeof phone !== 'string') return '';
+            const cleaned = phone.replace(/\D/g, '');
+            if (cleaned.length < 8 || cleaned.length > 15) return '';
+            if (cleaned.startsWith('00')) return cleaned;
+            return cleaned;
+        };
+        const sanitizePhone = _0x9c4d;
+
+        // Gestion des configurations
+        function toggleConfig(type) {
+            const configs = {
+                'countdown': 'countdown-config',
+                'stats': 'stats-config',
+                'cta': 'cta-config',
+                'pricing': 'pricing-config',
+                'team': 'team-config',
+                'faq': 'faq-config',
+                'gallery': 'gallery-config',
+                'map': 'map-config'
+            };
+            
+            const checkbox = document.getElementById('opt_' + type);
+            const configDiv = document.getElementById(configs[type]);
+            
+            if (configDiv) {
+                configDiv.style.display = checkbox.checked ? 'block' : 'none';
+            }
+            render();
+        }
+        
+        function addTeamMember() {
+            const container = document.getElementById('team-container');
+            const index = container.children.length + 1;
+            const div = document.createElement('div');
+            div.className = 'card-opt';
+            div.style.borderColor = 'rgba(99, 102, 241, 0.2)';
+            div.style.marginBottom = '10px';
+            div.innerHTML = `
+                <div style="font-size: 10px; opacity: 0.6; margin-bottom: 8px; font-weight: 700;">Membre #${index}</div>
+                <input type="text" class="input-dark team-name" placeholder="👤 Nom complet" oninput="render()">
+                <input type="text" class="input-dark team-role" placeholder="💼 Poste/Rôle" oninput="render()">
+                <input type="text" class="input-dark team-img" placeholder="🖼️ Photo URL (optionnel)" oninput="render()">
+            `;
+            container.appendChild(div);
+            render();
+        }
+        
+        function addFaqItem() {
+            const container = document.getElementById('faq-container');
+            const index = container.children.length + 1;
+            const div = document.createElement('div');
+            div.className = 'card-opt';
+            div.style.borderColor = 'rgba(168, 85, 247, 0.2)';
+            div.style.marginBottom = '10px';
+            div.innerHTML = `
+                <div style="font-size: 10px; opacity: 0.6; margin-bottom: 8px; font-weight: 700;">Question #${index}</div>
+                <input type="text" class="input-dark faq-question" placeholder="❓ Question" oninput="render()">
+                <textarea class="input-dark faq-answer" placeholder="💬 Réponse détaillée" oninput="render()"></textarea>
+            `;
+            container.appendChild(div);
+            render();
+        }
+        
+        function addGalleryImage() {
+            const container = document.getElementById('gallery-container');
+            const index = container.children.length + 1;
+            const div = document.createElement('div');
+            div.className = 'card-opt';
+            div.style.borderColor = 'rgba(56, 189, 248, 0.2)';
+            div.style.marginBottom = '10px';
+            div.innerHTML = `
+                <div style="font-size: 10px; opacity: 0.6; margin-bottom: 8px; font-weight: 700;">Image #${index}</div>
+                <input type="text" class="input-dark gallery-img" placeholder="🖼️ URL de l'image" oninput="render()">
+                <input type="text" class="input-dark gallery-alt" placeholder="📝 Description (alt)" oninput="render()">
+            `;
+            container.appendChild(div);
+            render();
+        }
+        
+        function setMode(m) {
+            const wrapper = document.getElementById('preview-wrapper');
+            if (wrapper) {
+                wrapper.className = m === 'mobile' ? 'mode-mobile' : '';
+            }
+        }
+        
+        function switchTab(t) {
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            
+            const tab = document.getElementById('tab-'+t);
+            const btn = document.getElementById('btn-'+t);
+            
+            if (tab) tab.classList.remove('hidden');
+            if (btn) btn.classList.add('active');
+        }
+
+        function addService() {
+            const container = document.getElementById('services-container');
+            if (!container) return;
+            
+            const d = document.createElement('div'); 
+            d.className = 'card-opt';
+            d.style.borderColor = 'rgba(56, 189, 248, 0.2)';
+            d.innerHTML = `
+                <div style="margin-bottom: 8px; font-size: 10px; opacity: 0.6; text-transform: uppercase; font-weight: 700;">Service #${container.children.length + 1}</div>
+                <input type="text" class="input-dark s-title" placeholder="📝 Titre du service">
+                <input type="text" class="input-dark s-img" placeholder="🖼️ Image URL">
+                <textarea class="input-dark s-desc" placeholder="📄 Description détaillée du service..."></textarea>
+            `;
+            d.querySelectorAll('input, textarea').forEach(i => i.oninput = render);
+            container.appendChild(d); 
+            render();
+        }
+
+        function addAvis() {
+            const container = document.getElementById('avis-container');
+            if (!container) return;
+            
+            const d = document.createElement('div'); 
+            d.className = 'card-opt';
+            d.style.borderColor = 'rgba(168, 85, 247, 0.3)';
+            d.style.background = 'linear-gradient(135deg, rgba(168, 85, 247, 0.05) 0%, rgba(147, 51, 234, 0.05) 100%)';
+            d.innerHTML = `
+                <div style="margin-bottom: 8px; font-size: 10px; opacity: 0.6; text-transform: uppercase; font-weight: 700; color: #a855f7;">Avis Client #${container.children.length + 1}</div>
+                <input type="text" class="input-dark a-name" placeholder="👤 Nom du client">
+                <input type="text" class="input-dark a-img" placeholder="🖼️ Photo URL">
+                <input type="number" class="input-dark a-star" placeholder="⭐ Étoiles (1-5)" value="5" min="0" max="5">
+                <textarea class="input-dark a-text" placeholder="💬 Avis détaillé du client..."></textarea>
+            `;
+            d.querySelectorAll('input, textarea').forEach(i => i.oninput = render);
+            container.appendChild(d); 
+            render();
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        let renderTimeout;
+        let autoRenderEnabled = true; // Mode auto-rendu activé par défaut
+        
+        function handleInput() {
+            if (autoRenderEnabled) {
+                render();
+            }
+        }
+        
+        function render() {
+            if (!autoRenderEnabled) return; // Ne pas render si mode manuel activé
+            
+            // Debouncing : évite de re-rendre trop souvent (augmenté à 500ms pour réduire le lag)
+            clearTimeout(renderTimeout);
+            renderTimeout = setTimeout(() => {
+                performRender();
+            }, 500);
+        }
+        
+        function forceRender() {
+            // Force le rendu immédiat
+            clearTimeout(renderTimeout);
+            performRender();
+        }
+        
+        function toggleAutoRender() {
+            autoRenderEnabled = !autoRenderEnabled;
+            const btn = document.getElementById('toggle-auto-render');
+            if (!btn) return;
+            
+            if (autoRenderEnabled) {
+                btn.textContent = '⏸️ Mode Manuel';
+                btn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+                forceRender(); // Render une fois au passage en auto
+            } else {
+                btn.textContent = '▶️ Mode Auto';
+                btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+            }
+        }
+        
+        function performRender() {
+            // SYSTÈME DE MODÉRATION INTELLIGENT
+            const moderateContent = (text) => {
+                if (!text || typeof text !== 'string') return text;
+                
+                // Liste de patterns CONTEXTUELS (pas juste des mots isolés)
+                const offensivePatterns = [
+                    // Contexte sexuel explicite (combinaisons de mots)
+                    /\b(sexe?|porn|xxx|adulte|érotique)\s+(gratuit|video|film|site)\b/gi,
+                    /\b(cul|seins?|bite|chatte)\s+(photos?|videos?|images?)\b/gi,
+                    
+                    // Insultes contextuelles (pas les mots seuls)
+                    /\b(sale|putain\s+de|enculé|connard|salope)\s+(de\s+)?(noir|blanc|arabe|juif|musulman|gay|pd)/gi,
+                    /\b(noir|blanc|arabe|juif|gay)\s+(de\s+merde|sale|dégueulasse)/gi,
+                    
+                    // Appels à la haine/violence
+                    /\b(mort\s+aux?|tuer\s+les|exterminer|génocide)\s+(noir|blanc|arabe|juif|musulman|gay)/gi,
+                    /\b(les|tous\s+les)\s+(noir|blanc|arabe|juif|musulman|gay)s?\s+(sont|doivent)/gi,
+                    
+                    // Contenu commercial adulte
+                    /\b(casino|poker|roulette|bitcoin)\s+(gratuit|gagnez|bonus)/gi,
+                    /\b(viagra|cialis|pilule)\s+(pas\s+cher|achat|vente)/gi
+                ];
+                
+                // Vérification contextuelle
+                for (let pattern of offensivePatterns) {
+                    if (pattern.test(text)) {
+                        console.warn('⚠️ Contenu potentiellement inapproprié détecté');
+                        // On retourne le texte mais on alerte
+                        showToast('⚠️ Attention : contenu détecté comme potentiellement inapproprié');
+                        return text; // On laisse passer mais on prévient
+                    }
+                }
+                
+                return text;
+            };
+            
+            const v = (id) => {
+                const el = document.getElementById(id);
+                if (!el) return '';
+                const value = escapeHtml(el.value);
+                return moderateContent(value); // Modération appliquée
+            };
+            
+            const vUrl = (id) => {
+                const el = document.getElementById(id);
+                return el ? sanitizeUrl(el.value) : '';
+            };
+            
+            // Validation Google Analytics ID (sécurisée)
+            const validateGAId = (id) => {
+                const gaId = v(id);
+                if (gaId && !/^(G-[A-Z0-9]{10}|UA-[0-9]{4,10}-[0-9]{1,4})$/.test(gaId)) {
+                    return '';
+                }
+                return gaId;
+            };
+            
+            // Validation email stricte
+            const validateEmail = (id) => {
+                const email = v(id);
+                if (email && !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+                    return '';
+                }
+                return email;
+            };
+            
+            // Validation des dates pour éviter XSS
+            const validateDate = (dateStr) => {
+                if (!dateStr) return '';
+                const date = new Date(dateStr);
+                if (isNaN(date.getTime())) return '';
+                return dateStr;
+            };
+            
+            // Validation stricte des numéros de téléphone
+            const validatePhone = (phone) => {
+                const cleaned = phone.replace(/\D/g, '');
+                if (cleaned.length < 8 || cleaned.length > 15) return '';
+                return cleaned;
+            };
+            
+            const theme = document.getElementById('theme_color').value;
+            const logo = vUrl('logo');
+            const phone = sanitizePhone(document.getElementById('phone').value);
+
+            let servs = ""; 
+            document.querySelectorAll('#services-container > div').forEach(b => {
+                const title = escapeHtml(b.querySelector('.s-title').value);
+                const img = sanitizeUrl(b.querySelector('.s-img').value);
+                const desc = escapeHtml(b.querySelector('.s-desc').value);
+                servs += `<div class="reveal bg-white/5 rounded-[2.5rem] overflow-hidden border border-white/10 flex-grow basis-[400px]">
+                    <div class="aspect-[4/3] bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
+                        ${img ? `<img src="${img}" class="w-full h-full object-cover" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML='<div class=\\'text-6xl\\'>📦</div>';">` : '<div class="text-6xl">📦</div>'}
+                    </div>
+                    <div class="p-10 text-center">
+                        <h3 class="text-2xl font-black uppercase mb-4 tracking-tight">${title}</h3>
+                        <p class="text-xs opacity-60 leading-loose">${desc}</p>
+                    </div>
+                </div>`;
+            });
+
+            let avisHtml = ""; 
+            let avisIdx = 0;
+            document.querySelectorAll('#avis-container > div').forEach(a => {
+                const name = escapeHtml(a.querySelector('.a-name').value);
+                const img = sanitizeUrl(a.querySelector('.a-img').value);
+                const stars = Math.min(5, Math.max(0, parseInt(a.querySelector('.a-star').value) || 5));
+                const text = escapeHtml(a.querySelector('.a-text').value);
+                avisHtml += `<div id="avis-${avisIdx}" class="avis-card ${avisIdx === 0 ? 'active' : ''} hidden">
+                    <div class="glass p-12 rounded-[3rem] max-w-2xl mx-auto">
+                        <div class="flex items-center gap-6 mb-8">
+                            ${img ? `<img src="${img}" class="w-20 h-20 rounded-full object-cover border-4 border-white/20" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                            <div class="w-20 h-20 rounded-full bg-gradient-to-br from-slate-700 to-slate-900 items-center justify-center text-3xl border-4 border-white/20 hidden">👤</div>` : 
+                            `<div class="w-20 h-20 rounded-full bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center text-3xl border-4 border-white/20">👤</div>`}
+                            <div>
+                                <p class="font-black text-lg uppercase">${name}</p>
+                                <p class="text-yellow-400 text-2xl">${'★'.repeat(stars)}</p>
+                            </div>
+                        </div>
+                        <p class="text-base opacity-80 leading-loose italic">"${text}"</p>
+                    </div>
+                </div>`; 
+                avisIdx++;
+            });
+
+            // Réseaux sociaux
+            let socialLinks = '';
+            const fb = vUrl('social_facebook');
+            const ig = vUrl('social_instagram');
+            const tw = vUrl('social_twitter');
+            const li = vUrl('social_linkedin');
+            const tk = vUrl('social_tiktok');
+            const yt = vUrl('social_youtube');
+            
+            if (fb || ig || tw || li || tk || yt) {
+                socialLinks = '<div class="flex gap-4 justify-center mt-6">';
+                if (fb) socialLinks += `<a href="${fb}" target="_blank" rel="noopener noreferrer" aria-label="Facebook" class="w-12 h-12 rounded-full glass flex items-center justify-center hover:scale-110 transition text-xl">📘</a>`;
+                if (ig) socialLinks += `<a href="${ig}" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="w-12 h-12 rounded-full glass flex items-center justify-center hover:scale-110 transition text-xl">📸</a>`;
+                if (tw) socialLinks += `<a href="${tw}" target="_blank" rel="noopener noreferrer" aria-label="Twitter" class="w-12 h-12 rounded-full glass flex items-center justify-center hover:scale-110 transition text-xl">🐦</a>`;
+                if (li) socialLinks += `<a href="${li}" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="w-12 h-12 rounded-full glass flex items-center justify-center hover:scale-110 transition text-xl">💼</a>`;
+                if (tk) socialLinks += `<a href="${tk}" target="_blank" rel="noopener noreferrer" aria-label="TikTok" class="w-12 h-12 rounded-full glass flex items-center justify-center hover:scale-110 transition text-xl">🎵</a>`;
+                if (yt) socialLinks += `<a href="${yt}" target="_blank" rel="noopener noreferrer" aria-label="YouTube" class="w-12 h-12 rounded-full glass flex items-center justify-center hover:scale-110 transition text-xl">📺</a>`;
+                socialLinks += '</div>';
+            }
+
+            const doc = `<!DOCTYPE html>
+<!-- iAxium v21.0 - Site généré le ${new Date().toLocaleString('fr-FR')} -->
+<!-- © ${new Date().getFullYear()} Sacha Pellerin - Tous droits réservés -->
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=(), payment=(), usb=()">
+    <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
+    <meta http-equiv="Cross-Origin-Resource-Policy" content="same-origin">
+    ${document.getElementById('opt_hsts') && document.getElementById('opt_hsts').checked ? '<meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains; preload">' : ''}
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' https://cdn.tailwindcss.com https://unpkg.com https://www.googletagmanager.com https://connect.facebook.net https://embed.tawk.to 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; img-src 'self' https: data: blob:; connect-src 'self' https:; frame-src 'self' https://www.google.com https://calendly.com; object-src 'none'; base-uri 'self'; form-action 'self' https:; frame-ancestors 'self';">
+    <title>${v('meta_title') || v('site_title') || 'Site Web'}</title>
+    ${v('meta_description') ? `<meta name="description" content="${v('meta_description')}">` : ''}
+    ${v('meta_keywords') ? `<meta name="keywords" content="${v('meta_keywords')}">` : ''}
+    ${vUrl('favicon') ? `<link rel="icon" href="${vUrl('favicon')}" type="image/x-icon">
+    <link rel="shortcut icon" href="${vUrl('favicon')}" type="image/x-icon">` : ''}
+    ${document.getElementById('opt_sitemap') && document.getElementById('opt_sitemap').checked ? '<link rel="sitemap" type="application/xml" href="/sitemap.xml">' : ''}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
+    ${document.getElementById('opt_open_graph') && document.getElementById('opt_open_graph').checked ? `<meta property="og:title" content="${v('meta_title') || 'Site Web'}">
+    <meta property="og:description" content="${v('meta_description') || v('desc')}">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="${vUrl('hero_img')}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="${v('meta_title') || 'Site Web'}">
+    <meta name="twitter:description" content="${v('meta_description') || v('desc')}">
+    <meta name="twitter:image" content="${vUrl('hero_img')}">` : ''}
+    ${document.getElementById('opt_pwa') && document.getElementById('opt_pwa').checked ? `<link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="${theme}">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="${vUrl('logo')}">` : ''}
+    <script src="https://cdn.tailwindcss.com"><\/script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    ${document.getElementById('opt_scroll') && document.getElementById('opt_scroll').checked ? '<script src="https://unpkg.com/scrollreveal"><\/script>' : ''}
+    ${validateGAId('google_analytics') ? `<script async src="https://www.googletagmanager.com/gtag/js?id=${validateGAId('google_analytics')}"><\/script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${validateGAId('google_analytics')}');<\/script>` : ''}
+    <style>
+        :root { 
+            --primary: ${theme}; 
+            --secondary: ${document.getElementById('secondary_color') ? document.getElementById('secondary_color').value : '#6366f1'};
+            --text-light: ${document.getElementById('text_light_color') ? document.getElementById('text_light_color').value : '#f1f5f9'};
+            --text-dark: ${document.getElementById('text_dark_color') ? document.getElementById('text_dark_color').value : '#1e293b'};
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        ${document.getElementById('opt_smooth_scroll') && document.getElementById('opt_smooth_scroll').checked ? 'html { scroll-behavior: smooth; }' : ''}
+        body { font-family: 'Inter', sans-serif; background: #020617; color: white; overflow-x: hidden; }
+        ${document.getElementById('opt_high_contrast') && document.getElementById('opt_high_contrast').checked ? 'body { filter: contrast(1.5); }' : ''}
+        ${document.getElementById('opt_focus_visible') && document.getElementById('opt_focus_visible').checked ? '*:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }' : ''}
+        body.dark { background: #020617; color: white; }
+        body.light { background: #f1f5f9; color: #020617; }
+        ${document.getElementById('opt_gradient_bg') && document.getElementById('opt_gradient_bg').checked ? `
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        body.dark { 
+            background: linear-gradient(-45deg, #020617, #1e1b4b, #7c3aed, #0f172a);
+            background-size: 400% 400%;
+            animation: gradientMove 15s ease infinite;
+        }` : ''}
+        ${document.getElementById('opt_cursor_trail') && document.getElementById('opt_cursor_trail').checked ? `
+        .cursor-trail { 
+            position: fixed; 
+            width: 20px; 
+            height: 20px; 
+            border-radius: 50%; 
+            background: radial-gradient(circle, var(--primary), transparent);
+            pointer-events: none; 
+            mix-blend-mode: screen;
+            opacity: 0.6;
+            z-index: 9999;
+        }` : ''}
+        .hero { height: 100vh; background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('${vUrl('hero_img')}') center/cover; position: relative; ${document.getElementById('opt_parallax') && document.getElementById('opt_parallax').checked ? 'background-attachment: fixed;' : ''} }
+        .logo-capsule { 
+            background: rgba(255,255,255,0.05); 
+            backdrop-filter: blur(20px); 
+            border-radius: 100px; 
+            padding: 6px 20px; 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center;
+            border: 1px solid rgba(255,255,255,0.1);
+            height: 50px;
+            max-width: 200px;
+            overflow: hidden;
+        }
+        .logo-capsule img { 
+            height: 100%;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+            border-radius: 100px;
+        }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); ${document.getElementById('opt_rounded_design') && document.getElementById('opt_rounded_design').checked ? 'border-radius: 24px;' : 'border-radius: 8px;'} }
+        ${document.getElementById('opt_hover_3d') && document.getElementById('opt_hover_3d').checked ? `
+        .glass:hover, .service-card:hover, .avis-card:hover {
+            transform: perspective(1000px) rotateX(2deg) rotateY(2deg) scale(1.02);
+            transition: transform 0.3s ease;
+        }` : ''}
+        ${document.getElementById('opt_particles') && document.getElementById('opt_particles').checked ? `
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: float 3s ease-in-out infinite;
+        }` : ''}
+        .avis-card { transition: 0.3s; } 
+        .avis-card.active { display: block !important; }
+        
+        #chat-bd-bubble { 
+            position: absolute; bottom: 85px; right: 0; background: white; color: black; 
+            padding: 8px 16px; border-radius: 20px 20px 0 20px; font-size: 11px; font-weight: 800;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: fit-content; max-width: 180px;
+            white-space: normal; animation: bounce 2s infinite; z-index: 10;
+        }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        .hidden-bubble { display: none !important; }
+
+        ${document.getElementById('opt_mobile_fixed_cta') && document.getElementById('opt_mobile_fixed_cta').checked ? `
+        @media (max-width: 768px) {
+            .mobile-fixed-cta {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                z-index: 1000;
+                padding: 16px;
+                background: var(--primary);
+                text-align: center;
+                box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+            }
+        }` : ''}
+
+        ${document.getElementById('opt_print_css') && document.getElementById('opt_print_css').checked ? `
+        @media print {
+            nav, .chat-widget, button, #backToTop, #cookieBanner { display: none !important; }
+            body { background: white !important; color: black !important; }
+            .glass { background: white !important; border: 1px solid #ccc !important; }
+            a { color: black !important; text-decoration: underline !important; }
+            .hero { page-break-after: always; }
+        }` : ''}
+
+        ${document.getElementById('opt_preloader').checked ? `
+        #preloader { position: fixed; inset: 0; background: #020617; z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .loader { width: 60px; height: 60px; border: 4px solid rgba(56, 189, 248, 0.2); border-top-color: #38bdf8; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        ` : ''}
+
+        ${document.getElementById('opt_backtotop').checked ? `
+        #backToTop { position: fixed; bottom: 100px; right: 30px; width: 50px; height: 50px; background: var(--primary); border-radius: 50%; display: none; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 999; transition: all 0.3s; }
+        #backToTop:hover { transform: translateY(-5px); }
+        ` : ''}
+
+        ${document.getElementById('opt_cookie_banner').checked ? `
+        #cookieBanner { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px); padding: 20px; z-index: 9998; border-top: 2px solid var(--primary); display: none; }
+        ` : ''}
+
+        ${document.getElementById('opt_countdown').checked ? `
+        #countdown { background: var(--primary); color: white; padding: 15px; text-align: center; font-weight: 900; position: fixed; top: 0; width: 100%; z-index: 1000; }
+        ` : ''}
+    </style>
+</head>
+<body>
+    ${document.getElementById('opt_preloader').checked ? `<div id="preloader"><div class="loader"></div></div>` : ''}
+    ${document.getElementById('maintenance').checked ? `<div class="fixed inset-0 z-[10000] bg-black flex items-center justify-center text-2xl font-black">MAINTENANCE</div>` : ''}
+
+    ${document.getElementById('opt_countdown').checked ? `
+    <div id="countdown">
+        <span style="font-size: 14px;">${v('countdown_text')}</span>
+        <span id="timer" style="margin-left: 20px; font-size: 18px;"></span>
+    </div>` : ''}
+
+    <nav class="fixed w-full z-50 p-6 flex justify-between items-center bg-black/50 backdrop-filter: blur(20px); border-b border-white/5" style="${document.getElementById('opt_countdown').checked ? 'top: 50px;' : 'top: 0;'}">
+        <div class="logo-capsule"><img src="${logo}" alt="Logo"></div>
+        <div class="flex gap-4">
+            ${document.getElementById('opt_darkmode').checked ? `<button onclick="toggleTheme()" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center" aria-label="Changer de thème">🌓</button>` : ''}
+            <a href="${validateEmail('contact_email') ? 'mailto:' + validateEmail('contact_email') : 'https://wa.me/' + phone}" class="px-8 py-3 rounded-full text-[10px] font-black uppercase text-black" style="background:var(--primary)">Contact</a>
+        </div>
+    </nav>
+
+    <header class="hero flex items-center justify-center text-center px-6">
+        <div class="reveal" style="position: relative; z-index: 1;">
+            <div class="logo-capsule mb-10" style="height: 150px;"><img src="${logo}" alt="Logo"></div>
+            ${v('site_title') ? `<h1 class="text-5xl md:text-7xl font-black uppercase mb-6 tracking-tight">${v('site_title')}</h1>` : ''}
+            <p class="text-xl md:text-2xl font-medium opacity-80 uppercase tracking-[0.3em] mb-12">${v('desc')}</p>
+            <a href="${validateEmail('contact_email') ? 'mailto:' + validateEmail('contact_email') : 'https://wa.me/' + phone}" class="px-10 py-5 rounded-full font-black uppercase hover:scale-105 transition shadow-2xl inline-block" style="background: var(--primary); color: white;">${v('hero_cta_text') || 'Passer Commande'}</a>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto py-32 px-6">
+        <h2 class="text-5xl md:text-8xl font-[900] uppercase text-center mb-20 tracking-tighter reveal">Nos Services</h2>
+        <div class="flex flex-wrap justify-center gap-12 mb-40">${servs}</div>
+
+        ${avisHtml ? `
+        <section class="mb-40 reveal text-center">
+            <h2 class="text-5xl md:text-8xl font-[900] uppercase mb-20 tracking-tighter">Avis Clients</h2>
+            <div class="max-w-4xl mx-auto relative">${avisHtml}
+                <div class="flex justify-center gap-4 mt-8">
+                    <button onclick="prevAvis()" class="w-16 h-16 rounded-full glass flex items-center justify-center text-2xl">←</button>
+                    <button onclick="nextAvis()" class="w-16 h-16 rounded-full glass flex items-center justify-center text-2xl">→</button>
+                </div>
+            </div>
+        </section>` : ''}
+
+        ${document.getElementById('opt_stats') && document.getElementById('opt_stats').checked ? `
+        <section class="mb-40 reveal">
+            <h2 class="text-5xl md:text-8xl font-[900] uppercase text-center mb-20 tracking-tighter">Nos Chiffres</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto">
+                <div class="text-center glass p-8 rounded-2xl">
+                    <p class="text-5xl font-black mb-2" style="color:var(--primary)">${v('stat1_number')}</p>
+                    <p class="text-sm opacity-60 uppercase font-bold">${v('stat1_label')}</p>
+                </div>
+                <div class="text-center glass p-8 rounded-2xl">
+                    <p class="text-5xl font-black mb-2" style="color:var(--primary)">${v('stat2_number')}</p>
+                    <p class="text-sm opacity-60 uppercase font-bold">${v('stat2_label')}</p>
+                </div>
+                <div class="text-center glass p-8 rounded-2xl">
+                    <p class="text-5xl font-black mb-2" style="color:var(--primary)">${v('stat3_number')}</p>
+                    <p class="text-sm opacity-60 uppercase font-bold">${v('stat3_label')}</p>
+                </div>
+                <div class="text-center glass p-8 rounded-2xl">
+                    <p class="text-5xl font-black mb-2" style="color:var(--primary)">${v('stat4_number')}</p>
+                    <p class="text-sm opacity-60 uppercase font-bold">${v('stat4_label')}</p>
+                </div>
+            </div>
+        </section>` : ''}
+
+        ${document.getElementById('opt_pricing') && document.getElementById('opt_pricing').checked ? `
+        <section class="mb-40 reveal">
+            <h2 class="text-5xl md:text-8xl font-[900] uppercase text-center mb-20 tracking-tighter">Nos Tarifs</h2>
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div class="glass p-8 rounded-3xl text-center">
+                    <h3 class="text-2xl font-black mb-4">${v('price1_name')}</h3>
+                    <p class="text-5xl font-black mb-6" style="color:var(--primary)">${v('price1_price')}</p>
+                    <ul class="space-y-3 text-sm mb-8 text-left">
+                        ${v('price1_features').split('\n').filter(f => f.trim()).map(f => `<li>✓ ${escapeHtml(f.trim())}</li>`).join('')}
+                    </ul>
+                    <a href="${validateEmail('contact_email') ? 'mailto:' + validateEmail('contact_email') + '?subject=Demande plan ' + v('price1_name') : 'https://wa.me/' + phone + '?text=' + encodeURIComponent('Je suis intéressé par le plan ' + v('price1_name'))}" class="block py-3 rounded-full font-bold uppercase text-sm" style="background:var(--primary);color:white;">Choisir</a>
+                </div>
+                <div class="glass p-8 rounded-3xl text-center border-2" style="border-color:var(--primary)">
+                    <h3 class="text-2xl font-black mb-4">${v('price2_name')}</h3>
+                    <p class="text-5xl font-black mb-6" style="color:var(--primary)">${v('price2_price')}</p>
+                    <ul class="space-y-3 text-sm mb-8 text-left">
+                        ${v('price2_features').split('\n').filter(f => f.trim()).map(f => `<li>✓ ${escapeHtml(f.trim())}</li>`).join('')}
+                    </ul>
+                    <a href="${validateEmail('contact_email') ? 'mailto:' + validateEmail('contact_email') + '?subject=Demande plan ' + v('price2_name') : 'https://wa.me/' + phone + '?text=' + encodeURIComponent('Je suis intéressé par le plan ' + v('price2_name'))}" class="block py-3 rounded-full font-bold uppercase text-sm" style="background:var(--primary);color:white;">Choisir</a>
+                </div>
+                <div class="glass p-8 rounded-3xl text-center">
+                    <h3 class="text-2xl font-black mb-4">${v('price3_name')}</h3>
+                    <p class="text-5xl font-black mb-6" style="color:var(--primary)">${v('price3_price')}</p>
+                    <ul class="space-y-3 text-sm mb-8 text-left">
+                        ${v('price3_features').split('\n').filter(f => f.trim()).map(f => `<li>✓ ${escapeHtml(f.trim())}</li>`).join('')}
+                    </ul>
+                    <a href="${validateEmail('contact_email') ? 'mailto:' + validateEmail('contact_email') + '?subject=Demande plan ' + v('price3_name') : 'https://wa.me/' + phone + '?text=' + encodeURIComponent('Je suis intéressé par le plan ' + v('price3_name'))}" class="block py-3 rounded-full font-bold uppercase text-sm" style="background:var(--primary);color:white;">Choisir</a>
+                </div>
+            </div>
+        </section>` : ''}
+
+        ${document.getElementById('opt_team') && document.getElementById('opt_team').checked ? (() => {
+            let teamHtml = '';
+            document.querySelectorAll('#team-container > div').forEach(t => {
+                const name = escapeHtml(t.querySelector('.team-name').value);
+                const role = escapeHtml(t.querySelector('.team-role').value);
+                const img = sanitizeUrl(t.querySelector('.team-img').value);
+                if (name) {
+                    teamHtml += `<div class="text-center">
+                        ${img ? `<img src="${img}" class="w-32 h-32 mx-auto mb-4 rounded-full object-cover border-4 border-white/10" alt="${name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                               <div class="w-32 h-32 mx-auto mb-4 rounded-full bg-gradient-to-br from-slate-700 to-slate-900 items-center justify-center text-4xl hidden">👤</div>` : 
+                               `<div class="w-32 h-32 mx-auto mb-4 rounded-full bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center text-4xl">👤</div>`}
+                        <h3 class="font-black text-xl mb-1">${name}</h3>
+                        <p class="text-sm opacity-60">${role}</p>
+                    </div>`;
+                }
+            });
+            return teamHtml ? `
+            <section class="mb-40 reveal">
+                <h2 class="text-5xl md:text-8xl font-[900] uppercase text-center mb-20 tracking-tighter">Notre Équipe</h2>
+                <div class="flex flex-wrap justify-center gap-10 max-w-5xl mx-auto">${teamHtml}</div>
+            </section>` : '';
+        })() : ''}
+
+        ${document.getElementById('opt_gallery') && document.getElementById('opt_gallery').checked ? (() => {
+            let galleryHtml = '';
+            document.querySelectorAll('#gallery-container > div').forEach(g => {
+                const img = sanitizeUrl(g.querySelector('.gallery-img').value);
+                const alt = escapeHtml(g.querySelector('.gallery-alt').value);
+                if (img) {
+                    galleryHtml += `<div class="aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
+                        <img src="${img}" alt="${alt}" ${document.getElementById('opt_lazy_load') && document.getElementById('opt_lazy_load').checked ? 'loading="lazy" decoding="async"' : ''} class="w-full h-full object-cover hover:scale-110 transition duration-500" onerror="this.style.display='none';this.parentElement.innerHTML='<div class=\\'text-5xl\\'>🖼️</div>';">
+                    </div>`;
+                } else {
+                    galleryHtml += `<div class="aspect-square bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl"></div>`;
+                }
+            });
+            return `
+            <section class="mb-40 reveal">
+                <h2 class="text-5xl md:text-8xl font-[900] uppercase text-center mb-20 tracking-tighter">Galerie</h2>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-5xl mx-auto">${galleryHtml}</div>
+            </section>`;
+        })() : ''}
+
+        ${document.getElementById('opt_faq') && document.getElementById('opt_faq').checked ? (() => {
+            let faqHtml = '';
+            document.querySelectorAll('#faq-container > div').forEach(f => {
+                const question = escapeHtml(f.querySelector('.faq-question').value);
+                const answer = escapeHtml(f.querySelector('.faq-answer').value);
+                if (question && answer) {
+                    faqHtml += `<div class="glass p-6 rounded-2xl">
+                        <h3 class="font-black text-lg mb-2">${question}</h3>
+                        <p class="opacity-70 text-sm">${answer}</p>
+                    </div>`;
+                }
+            });
+            return faqHtml ? `
+            <section class="mb-40 reveal">
+                <h2 class="text-5xl md:text-8xl font-[900] uppercase text-center mb-20 tracking-tighter">Questions Fréquentes</h2>
+                <div class="max-w-3xl mx-auto space-y-4">${faqHtml}</div>
+            </section>` : '';
+        })() : ''}
+
+        ${document.getElementById('opt_cta_banner') && document.getElementById('opt_cta_banner').checked ? `
+        <section class="mb-40 reveal">
+            <div class="glass p-16 rounded-[3rem] text-center max-w-4xl mx-auto">
+                <h2 class="text-4xl md:text-6xl font-black mb-6">${v('cta_title')}</h2>
+                <p class="text-lg opacity-80 mb-8">${v('cta_text')}</p>
+                <a href="${validateEmail('contact_email') ? 'mailto:' + validateEmail('contact_email') + '?subject=Contact depuis le site' : 'https://wa.me/' + phone + '?text=' + encodeURIComponent('Bonjour, je souhaiterais vous contacter')}" class="inline-block px-12 py-5 rounded-full font-black uppercase text-sm text-white" style="background:var(--primary)">${v('cta_button')}</a>
+            </div>
+        </section>` : ''}
+
+        ${document.getElementById('opt_contact_form') && document.getElementById('opt_contact_form').checked ? `
+        <section class="mb-40 reveal">
+            <h2 class="text-5xl md:text-8xl font-[900] uppercase text-center mb-20 tracking-tighter">Contactez-nous</h2>
+            <div class="max-w-2xl mx-auto glass p-10 rounded-3xl">
+                <form onsubmit="return sendContactForm(event);" class="space-y-4" id="contact-form">
+                    <input type="text" id="contact-name" placeholder="Votre nom" required class="w-full p-4 bg-white/5 border border-white/10 rounded-xl outline-none">
+                    <input type="email" id="contact-email-input" placeholder="Votre email" required class="w-full p-4 bg-white/5 border border-white/10 rounded-xl outline-none">
+                    <input type="tel" id="contact-tel" placeholder="Votre téléphone" class="w-full p-4 bg-white/5 border border-white/10 rounded-xl outline-none">
+                    ${document.getElementById('opt_honeypot') && document.getElementById('opt_honeypot').checked ? '<input type="text" id="website_url" name="website_url" placeholder="Your website" autocomplete="off" tabindex="-1" style="position:absolute;left:-9999px;width:1px;height:1px;" aria-hidden="true">' : ''}
+                    <textarea id="contact-message" placeholder="Votre message" required class="w-full p-4 bg-white/5 border border-white/10 rounded-xl outline-none h-32"></textarea>
+                    <button type="submit" class="w-full py-4 rounded-xl font-black uppercase text-sm text-white" style="background:var(--primary)">Envoyer</button>
+                </form>
+            </div>
+        </section>` : ''}
+
+        ${document.getElementById('opt_map') && document.getElementById('opt_map').checked && v('map_embed') ? (() => {
+            const embedCode = v('map_embed');
+            const srcMatch = embedCode.match(/src=["']([^"']+)["']/);
+            const mapUrl = srcMatch ? sanitizeUrl(srcMatch[1]) : '';
+            return mapUrl && mapUrl.includes('google.com/maps') ? `
+            <section class="mb-40 reveal">
+                <h2 class="text-5xl md:text-8xl font-[900] uppercase text-center mb-20 tracking-tighter">Nous Trouver</h2>
+                <div class="max-w-5xl mx-auto rounded-3xl overflow-hidden" style="height: 450px;">
+                    <iframe src="${mapUrl}" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </section>` : '';
+        })() : ''}
+
+        ${document.getElementById('opt_mailchimp') && document.getElementById('opt_mailchimp').checked && v('mailchimp_action') ? `
+        <section class="mb-40 reveal">
+            <h2 class="text-5xl md:text-8xl font-[900] uppercase text-center mb-20 tracking-tighter">Newsletter</h2>
+            <div class="max-w-2xl mx-auto glass p-10 rounded-3xl">
+                <p class="text-center mb-6 opacity-80">Inscrivez-vous pour recevoir nos dernières actualités</p>
+                <form action="${sanitizeUrl(v('mailchimp_action'))}" method="post" target="_blank" class="flex gap-4">
+                    <input type="email" name="EMAIL" placeholder="Votre email" required class="flex-1 p-4 bg-white/5 border border-white/10 rounded-xl outline-none">
+                    <button type="submit" class="px-8 py-4 rounded-xl font-black uppercase text-sm text-white" style="background:var(--primary)">S'inscrire</button>
+                </form>
+            </div>
+        </section>` : ''}
+
+        ${document.getElementById('opt_calendly') && document.getElementById('opt_calendly').checked && v('calendly_url') ? `
+        <section class="mb-40 reveal">
+            <h2 class="text-5xl md:text-8xl font-[900] uppercase text-center mb-20 tracking-tighter">Prendre Rendez-vous</h2>
+            <div class="max-w-4xl mx-auto glass p-10 rounded-3xl text-center">
+                <p class="mb-6 opacity-80">Réservez un créneau qui vous convient</p>
+                <a href="${sanitizeUrl(v('calendly_url'))}" target="_blank" rel="noopener noreferrer" class="inline-block px-10 py-5 rounded-xl font-black uppercase text-sm text-white" style="background:var(--primary)">Voir les disponibilités</a>
+            </div>
+        </section>` : ''}
+
+        ${document.getElementById('opt_trustpilot') && document.getElementById('opt_trustpilot').checked && v('trustpilot_domain') ? `
+        <section class="mb-40 reveal">
+            <h2 class="text-5xl md:text-8xl font-[900] uppercase text-center mb-20 tracking-tighter">Avis Certifiés</h2>
+            <div class="max-w-4xl mx-auto text-center">
+                <div class="trustpilot-widget" data-locale="fr-FR" data-template-id="5419b6a8b0d04a076446a9ad" data-businessunit-id="${v('trustpilot_domain')}" data-style-height="24px" data-style-width="100%" data-theme="dark">
+                    <a href="https://fr.trustpilot.com/review/${v('trustpilot_domain')}" target="_blank" rel="noopener noreferrer">Trustpilot</a>
+                </div>
+            </div>
+        </section>` : ''}
+    </main>
+
+    ${document.getElementById('opt_mobile_fixed_cta') && document.getElementById('opt_mobile_fixed_cta').checked ? `
+    <div class="mobile-fixed-cta md:hidden">
+        <a href="${phone ? 'tel:+' + phone : (validateEmail('contact_email') ? 'mailto:' + validateEmail('contact_email') : '#')}" class="block py-4 px-6 rounded-xl font-black uppercase text-sm text-white">
+            📞 Nous Contacter
+        </a>
+    </div>` : ''}
+
+    ${document.getElementById('enable_chat').checked ? `
+    <div class="fixed bottom-8 right-8 z-[9999]">
+        <div id="chat-bd-bubble">${v('chat_bd_text')}</div>
+        <button onclick="toggleChat()" class="w-16 h-16 rounded-full border-4 border-white shadow-2xl overflow-hidden hover:scale-110 transition" style="background:var(--primary)">
+            <img src="${vUrl('chat_agent_img')}" class="w-full h-full object-cover">
+        </button>
+        <div id="chat-win" class="hidden absolute bottom-24 right-0 w-80 bg-white rounded-3xl overflow-hidden shadow-2xl text-black">
+            <div class="p-6 text-white flex items-center gap-4" style="background:var(--primary)">
+                <img src="${vUrl('chat_agent_img')}" class="w-10 h-10 rounded-full object-cover">
+                <p class="font-black uppercase text-xs">${v('chat_agent_name')}</p>
+            </div>
+            <div class="p-6 space-y-4 bg-slate-50 min-h-[300px]">
+                <div id="auto-msg" class="hidden bg-white p-4 rounded-2xl rounded-tl-none border border-slate-200 text-xs text-slate-600 shadow-sm animate-pulse">
+                    ${v('chat_auto_msg')}
+                </div>
+                <input type="text" id="c-name" placeholder="Votre Nom" class="w-full p-4 bg-white border border-slate-200 rounded-xl text-xs outline-none">
+                <textarea id="c-msg" placeholder="Votre question..." class="w-full p-4 bg-white border border-slate-200 rounded-xl text-xs outline-none h-24"></textarea>
+                <button onclick="sendWA()" class="w-full py-4 rounded-xl text-white font-black text-[10px] uppercase tracking-widest" style="background:var(--primary)">Envoyer</button>
+            </div>
+        </div>
+    </div>` : ''}
+
+    ${document.getElementById('opt_backtotop').checked ? `<div id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>` : ''}
+
+    ${document.getElementById('opt_cookie_banner').checked ? `
+    <div id="cookieBanner">
+        <div class="max-w-4xl mx-auto flex items-center justify-between gap-6">
+            <p class="text-sm">🍪 Nous utilisons des cookies pour améliorer votre expérience.</p>
+            <button onclick="acceptCookies()" class="px-6 py-2 rounded-full font-bold text-xs uppercase" style="background:var(--primary);color:white;">Accepter</button>
+        </div>
+    </div>` : ''}
+
+    <footer class="py-24 border-t border-white/5 text-center px-6">
+        <div class="logo-capsule mb-10" style="height: 60px;"><img src="${logo}" alt="Logo"></div>
+        ${socialLinks}
+        ${v('contact_email') || v('contact_address') || v('contact_phone_display') ? `
+        <div class="mt-8 space-y-2 text-sm opacity-70">
+            ${validateEmail('contact_email') ? `<p>📧 ${validateEmail('contact_email')}</p>` : ''}
+            ${v('contact_address') ? `<p>📍 ${v('contact_address')}</p>` : ''}
+            ${v('contact_phone_display') ? `<p>📞 ${v('contact_phone_display')}</p>` : ''}
+        </div>` : ''}
+        <p class="text-[11px] opacity-50 font-bold uppercase mt-6" id="mirage-credit" data-integrity="MGR-${btoa('Mirage-2025-Sacha-Pellerin')}">Design par iAxium & design - Contactez-nous : sacha.pellerin.45@gmail.com</p>
+        ${document.getElementById('opt_auto_copyright') && document.getElementById('opt_auto_copyright').checked ? `<p class="text-[10px] opacity-40 mt-2">© <span id="year">${new Date().getFullYear()}</span> Tous droits réservés</p>` : ''}
+    </footer>
+
+    <script>
+        // SÉCURITÉ: Protection anti-clickjacking
+        if (window.top !== window.self) {
+            window.top.location = window.self.location;
+        }
+        
+        // SÉCURITÉ: Désactivation du clic droit (optionnel - peut être commenté si gênant)
+        document.addEventListener('contextmenu', (e) => {
+            // e.preventDefault(); // Décommentez pour bloquer le clic droit
+        });
+        
+        // SÉCURITÉ: Détection basique d'outils de développement
+        (function() {
+            const detectDevTools = () => {
+                const threshold = 160;
+                const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+                const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+                if (widthThreshold || heightThreshold) {
+                    // DevTools détectés - vous pouvez ajouter une action ici
+                    console.clear();
+                }
+            };
+            // Vérification toutes les 1 secondes
+            setInterval(detectDevTools, 1000);
+        })();
+        
+        // SÉCURITÉ: Protection du contenu contre la sélection (désactivée par défaut)
+        // document.body.style.userSelect = 'none'; // Décommentez pour bloquer la sélection
+        
+        ${document.getElementById('opt_preloader') && document.getElementById('opt_preloader').checked ? `window.addEventListener('load',()=>document.getElementById('preloader').style.display='none');` : ''}
+        
+        function toggleTheme() { document.documentElement.classList.toggle('light'); document.documentElement.classList.toggle('dark'); }
+
+        ${document.getElementById('opt_particles') && document.getElementById('opt_particles').checked ? `
+        // Génération des particules flottantes
+        function createParticles() {
+            const hero = document.querySelector('.hero');
+            if (hero) {
+                for (let i = 0; i < 30; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.top = Math.random() * 100 + '%';
+                    particle.style.animationDelay = Math.random() * 3 + 's';
+                    hero.appendChild(particle);
+                }
+            }
+        }
+        setTimeout(createParticles, 500);` : ''}
+
+        ${document.getElementById('opt_cursor_trail') && document.getElementById('opt_cursor_trail').checked ? `
+        // Effet de traînée de curseur
+        let trails = [];
+        document.addEventListener('mousemove', (e) => {
+            const trail = document.createElement('div');
+            trail.className = 'cursor-trail';
+            trail.style.left = e.pageX + 'px';
+            trail.style.top = e.pageY + 'px';
+            document.body.appendChild(trail);
+            trails.push(trail);
+            setTimeout(() => {
+                trail.remove();
+                trails = trails.filter(t => t !== trail);
+            }, 500);
+            if (trails.length > 15) {
+                trails[0].remove();
+                trails.shift();
+            }
+        });` : ''}
+
+        ${document.getElementById('opt_share_api') && document.getElementById('opt_share_api').checked ? `
+        // Bouton de partage natif
+        function shareNative() {
+            if (navigator.share) {
+                navigator.share({
+                    title: document.title,
+                    text: '${v('desc')}',
+                    url: window.location.href
+                }).catch(() => {});
+            }
+        }` : ''}
+        
+        function toggleChat() { 
+            const win = document.getElementById('chat-win');
+            const bubble = document.getElementById('chat-bd-bubble');
+            win.classList.toggle('hidden');
+            if(!win.classList.contains('hidden')) {
+                bubble.classList.add('hidden-bubble');
+                setTimeout(() => { document.getElementById('auto-msg').classList.remove('hidden', 'animate-pulse'); }, 600);
+            }
+        }
+        
+        function sendWA() {
+            const nameInput = document.getElementById('c-name');
+            const msgInput = document.getElementById('c-msg');
+            
+            if (!nameInput || !msgInput) return;
+            
+            const n = nameInput.value.trim();
+            const m = msgInput.value.trim();
+            
+            // Validation : empêche les champs vides
+            if (!n || !m) {
+                alert('Veuillez remplir tous les champs');
+                return;
+            }
+            
+            // Validation : limite de longueur
+            if (n.length > 100 || m.length > 1000) {
+                alert('Texte trop long');
+                return;
+            }
+            
+            // Double encodage pour sécurité maximale
+            const escapedName = encodeURIComponent(encodeURIComponent(n));
+            const escapedMsg = encodeURIComponent(encodeURIComponent(m));
+            
+            const phone = "${phone}";
+            if (phone && /^[0-9]{8,15}$/.test(phone)) {
+                window.open("https://wa.me/" + phone + "?text=Nom: " + escapedName + "%0AMessage: " + escapedMsg, '_blank', 'noopener,noreferrer');
+            }
+        }
+        
+        function sendContactForm(e) {
+            e.preventDefault();
+            
+            // SÉCURITÉ 1: Vérification Honeypot anti-spam
+            const honeypot = document.getElementById('website_url');
+            if (honeypot && honeypot.value !== '') {
+                console.warn('🚫 Spam détecté via honeypot');
+                return false;
+            }
+            
+            // SÉCURITÉ 2: Rate limiting basique (max 1 envoi toutes les 10 secondes)
+            const lastSubmit = window.lastContactSubmit || 0;
+            const now = Date.now();
+            if (now - lastSubmit < 10000) {
+                alert('⏱️ Veuillez attendre 10 secondes entre chaque envoi');
+                return false;
+            }
+            window.lastContactSubmit = now;
+            
+            const nameInput = document.getElementById('contact-name');
+            const emailInput = document.getElementById('contact-email-input');
+            const telInput = document.getElementById('contact-tel');
+            const messageInput = document.getElementById('contact-message');
+            
+            if (!nameInput || !emailInput || !messageInput) return false;
+            
+            const name = nameInput.value.trim();
+            const email = emailInput.value.trim();
+            const tel = telInput ? telInput.value.trim() : '';
+            const message = messageInput.value.trim();
+            
+            // SÉCURITÉ 3: Validation présence champs obligatoires
+            if (!name || !email || !message) {
+                alert('Veuillez remplir tous les champs obligatoires');
+                return false;
+            }
+            
+            // SÉCURITÉ 4: Validation email stricte
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailRegex.test(email)) {
+                alert('Email invalide');
+                return false;
+            }
+            
+            // SÉCURITÉ 5: Blocage domaines jetables connus
+            const disposableDomains = ['tempmail.com', 'guerrillamail.com', 'mailinator.com', '10minutemail.com'];
+            const emailDomain = email.split('@')[1];
+            if (disposableDomains.includes(emailDomain)) {
+                alert('❌ Les emails jetables ne sont pas acceptés');
+                return false;
+            }
+            
+            // SÉCURITÉ 6: Limite de longueur stricte
+            if (name.length > 100 || email.length > 100 || message.length > 2000 || tel.length > 20) {
+                alert('Un des champs est trop long');
+                return false;
+            }
+            
+            // SÉCURITÉ 7: Détection de caractères suspects (injection)
+            const suspiciousPatterns = /<script|javascript:|onerror=|onclick=|<iframe/i;
+            if (suspiciousPatterns.test(name) || suspiciousPatterns.test(email) || suspiciousPatterns.test(message)) {
+                console.warn('🚫 Tentative d\'injection détectée');
+                return false;
+            }
+            
+            // SÉCURITÉ 8: Validation téléphone (si fourni)
+            if (tel && !/^[0-9+\s\-()]{0,20}$/.test(tel)) {
+                alert('Format de téléphone invalide');
+                return false;
+            }
+            
+            ${validateEmail('contact_email') ? `
+            // Envoi par email
+            const subject = encodeURIComponent('Contact depuis le site - ' + name);
+            const body = encodeURIComponent('Nom: ' + name + '\\nEmail: ' + email + '\\nTéléphone: ' + tel + '\\n\\nMessage:\\n' + message);
+            window.location.href = 'mailto:${validateEmail('contact_email')}?subject=' + subject + '&body=' + body;
+            ` : `
+            // Envoi par WhatsApp
+            const phone = "${phone}";
+            if (phone && /^[0-9]{8,15}$/.test(phone)) {
+                const text = encodeURIComponent('Nom: ' + name + '\\nEmail: ' + email + '\\nTéléphone: ' + tel + '\\n\\nMessage:\\n' + message);
+                window.open('https://wa.me/' + phone + '?text=' + text, '_blank', 'noopener,noreferrer');
+            }
+            `}
+            
+            return false;
+        }
+        
+        let curr = 0; 
+        const total = document.querySelectorAll('.avis-card').length;
+        function show(i) { 
+            document.querySelectorAll('.avis-card').forEach(c => c.classList.remove('active')); 
+            if(document.getElementById('avis-'+i)) document.getElementById('avis-'+i).classList.add('active'); 
+        }
+        function nextAvis() { curr = (curr + 1) % total; show(curr); }
+        function prevAvis() { curr = (curr - 1 + total) % total; show(curr); }
+
+        ${document.getElementById('opt_testimonials_carousel') && document.getElementById('opt_testimonials_carousel').checked ? `
+        // Carrousel automatique des avis (toutes les 5 secondes)
+        let autoCarousel = setInterval(() => { if (total > 1) nextAvis(); }, 5000);
+        
+        // Pause au survol
+        const avisSection = document.querySelector('.avis-card')?.parentElement;
+        if (avisSection) {
+            avisSection.addEventListener('mouseenter', () => clearInterval(autoCarousel));
+            avisSection.addEventListener('mouseleave', () => { autoCarousel = setInterval(() => { if (total > 1) nextAvis(); }, 5000); });
+        }` : ''}
+
+        ${document.getElementById('opt_backtotop').checked ? `
+        window.addEventListener('scroll', () => {
+            const btn = document.getElementById('backToTop');
+            if (window.scrollY > 300) btn.style.display = 'flex';
+            else btn.style.display = 'none';
+        });` : ''}
+
+        ${document.getElementById('opt_cookie_banner').checked ? `
+        if(!localStorage.getItem('cookies_accepted')) {
+            setTimeout(() => document.getElementById('cookieBanner').style.display = 'block', 2000);
+        }
+        function acceptCookies() {
+            localStorage.setItem('cookies_accepted', 'true');
+            document.getElementById('cookieBanner').style.display = 'none';
+        }` : ''}
+
+        ${document.getElementById('opt_countdown').checked && v('countdown_date') ? `
+        const countDownDate = new Date("${document.getElementById('countdown_date').value}").getTime();
+        setInterval(() => {
+            const now = new Date().getTime();
+            const distance = countDownDate - now;
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            document.getElementById('timer').innerHTML = days + "j " + hours + "h " + minutes + "m " + seconds + "s";
+            if (distance < 0) document.getElementById('countdown').style.display = 'none';
+        }, 1000);` : ''}
+        
+        // Protection du crédit Mirage (vérifie l'intégrité) - EXTRÊMEMENT DIFFICILE À RETIRER
+        (function() {
+            const _0x4a2b = ['mirage-credit', 'getElementById', 'textContent', 'iAxium', 'sacha.pellerin.45@gmail.com', 'includes', 'body', 'innerHTML'];
+            const checkIntegrity = () => {
+                const el = document[_0x4a2b[1]](_0x4a2b[0]);
+                if (!el || !el[_0x4a2b[2]][_0x4a2b[5]](_0x4a2b[3]) || !el[_0x4a2b[2]][_0x4a2b[5]](_0x4a2b[4])) {
+                    console.warn('⚠️ Violation de licence détectée');
+                    const warningScreen = atob('PGRpdiBzdHlsZT0iZGlzcGxheTpmbGV4O2FsaWduLWl0ZW1zOmNlbnRlcjtqdXN0aWZ5LWNvbnRlbnQ6Y2VudGVyO2hlaWdodDoxMDB2aDtiYWNrZ3JvdW5kOiMwMDA7Y29sb3I6I2VmNDQ0NDtmb250LWZhbWlseTptb25vc3BhY2U7dGV4dC1hbGlnbjpjZW50ZXI7ZmxleC1kaXJlY3Rpb246Y29sdW1uOyI+PGgxIHN0eWxlPSJmb250LXNpemU6NDhweDttYXJnaW4tYm90dG9tOjIwcHg7Ij7imqDvuI88L2gxPjxoMiBzdHlsZT0iZm9udC1zaXplOjI0cHg7bWFyZ2luLWJvdHRvbToxMHB4OyI+VmlvbGF0aW9uIGRlIExpY2VuY2U8L2gyPjxwIHN0eWxlPSJvcGFjaXR5OjAuNzsiPkxlIGNyw6lkaXQgTWlyYWdlIGEgw6l0w6kgc3VwcHJpbcOpLjwvcD48cCBzdHlsZT0ibWFyZ2luLXRvcDoyMHB4O2ZvbnQtc2l6ZToxNHB4OyI+Q29udGFjdDogc2FjaGEucGVsbGVyaW4uNDVAZ21haWwuY29tPC9wPjwvZGl2Pg==');
+                    document[_0x4a2b[6]][_0x4a2b[7]] = warningScreen;
+                }
+            };
+            setInterval(checkIntegrity, 5000);
+            setTimeout(checkIntegrity, 1000);
+            
+            // Protection contre la modification du DOM
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.type === 'childList' || mutation.type === 'characterData') {
+                        setTimeout(checkIntegrity, 100);
+                    }
+                });
+            });
+            const footer = document.querySelector('footer');
+            if (footer) observer.observe(footer, { childList: true, subtree: true, characterData: true });
+        })();
+        
+        ${document.getElementById('opt_schema') && document.getElementById('opt_schema').checked ? `
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "${v('meta_title') || 'Entreprise'}",
+        "description": "${v('meta_description') || v('desc')}",
+        "image": "${vUrl('hero_img')}",
+        "telephone": "${phone ? '+' + phone : ''}",
+        "email": "${validateEmail('contact_email')}",
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "${v('contact_address').split(',')[0] || ''}",
+            "streetAddress": "${v('contact_address')}"
+        },
+        "url": "${typeof window !== 'undefined' ? window.location.origin : ''}",
+        "priceRange": "$$"
+    }
+    <\/script>` : ''}
+    
+    <script>
+    ${document.getElementById('opt_scroll').checked ? 'ScrollReveal().reveal(".reveal", { delay: 200, distance: "30px", origin: "bottom", duration: 800 });' : ''}
+    <\/script>
+
+    ${document.getElementById('opt_messenger') && document.getElementById('opt_messenger').checked && v('messenger_page_id') ? `
+    <!-- Facebook Messenger Plugin -->
+    <div id="fb-root"></div>
+    <div id="fb-customer-chat" class="fb-customerchat"></div>
+    <script>
+        var chatbox = document.getElementById('fb-customer-chat');
+        chatbox.setAttribute("page_id", "${v('messenger_page_id')}");
+        chatbox.setAttribute("attribution", "biz_inbox");
+        window.fbAsyncInit = function() {
+            FB.init({xfbml:true,version:'v18.0'});
+        };
+        (function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = 'https://connect.facebook.net/fr_FR/sdk/xfbml.customerchat.js';
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    <\/script>` : ''}
+
+    ${document.getElementById('opt_tawk') && document.getElementById('opt_tawk').checked && v('tawk_property_id') ? `
+    <!-- Tawk.to Live Chat -->
+    <script type="text/javascript">
+        var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+        (function(){
+            var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+            s1.async=true;
+            s1.src='https://embed.tawk.to/${v('tawk_property_id')}/default';
+            s1.charset='UTF-8';
+            s1.setAttribute('crossorigin','*');
+            s0.parentNode.insertBefore(s1,s0);
+        })();
+    <\/script>` : ''}
+
+    ${document.getElementById('opt_service_worker') && document.getElementById('opt_service_worker').checked ? `
+    <!-- Service Worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').then(reg => {
+                console.log('Service Worker enregistré', reg);
+            }).catch(err => {
+                console.log('Erreur Service Worker', err);
+            });
+        }
+    <\/script>` : ''}
+
+</body>
+</html>`;
+            
+            // Optimisation : mise à jour avec srcdoc + RAF pour éviter le lag
+            requestAnimationFrame(() => {
+                const iframe = document.getElementById('preview-frame');
+                if (iframe) {
+                    iframe.srcdoc = doc;
+                    window.currentSite = doc;
+                }
+            });
+        }
+
+        async function copyAndDownloadSite() {
+            try {
+                await navigator.clipboard.writeText(window.currentSite);
+                showToast('✅ Code copié dans le presse-papier !');
+                
+                // Téléchargement après 500ms
+                setTimeout(() => {
+                    const b = new Blob([window.currentSite], {type:'text/html'});
+                    const a = document.createElement('a'); 
+                    a.href = URL.createObjectURL(b); 
+                    a.download = 'index.html'; 
+                    a.click();
+                    showToast('📥 Fichier téléchargé !');
+                }, 500);
+            } catch (err) {
+                showToast('❌ Erreur lors de la copie');
+                console.error(err);
+            }
+        }
+
+        // EXPORT DE CONFIGURATION
+        function exportConfig() {
+            try {
+                const config = {};
+                
+                // Récupération de TOUS les inputs, textareas, checkboxes
+                document.querySelectorAll('input, textarea, select').forEach(el => {
+                    if (el.id && !el.classList.contains('s-title') && !el.classList.contains('a-name') && !el.classList.contains('team-name') && !el.classList.contains('gallery-img') && !el.classList.contains('faq-q')) {
+                        if (el.type === 'checkbox') {
+                            config[el.id] = el.checked;
+                        } else {
+                            config[el.id] = el.value;
+                        }
+                    }
+                });
+                
+                // Récupération des services
+                const services = [];
+                document.querySelectorAll('#services-container > div').forEach(s => {
+                    const titleEl = s.querySelector('.s-title');
+                    const imgEl = s.querySelector('.s-img');
+                    const descEl = s.querySelector('.s-desc');
+                    if (titleEl && imgEl && descEl) {
+                        services.push({
+                            title: titleEl.value,
+                            img: imgEl.value,
+                            desc: descEl.value
+                        });
+                    }
+                });
+                config._services = services;
+                
+                // Récupération des avis
+                const avis = [];
+                document.querySelectorAll('#avis-container > div').forEach(a => {
+                    const nameEl = a.querySelector('.a-name');
+                    const imgEl = a.querySelector('.a-img');
+                    const starsEl = a.querySelector('.a-star');
+                    const textEl = a.querySelector('.a-text');
+                    if (nameEl && imgEl && starsEl && textEl) {
+                        avis.push({
+                            name: nameEl.value,
+                            img: imgEl.value,
+                            stars: starsEl.value,
+                            text: textEl.value
+                        });
+                    }
+                });
+                config._avis = avis;
+                
+                // Récupération de l'équipe
+                const team = [];
+                document.querySelectorAll('#team-container > div').forEach(t => {
+                    const nameEl = t.querySelector('.team-name');
+                    const roleEl = t.querySelector('.team-role');
+                    const imgEl = t.querySelector('.team-img');
+                    if (nameEl && roleEl && imgEl) {
+                        team.push({
+                            name: nameEl.value,
+                            role: roleEl.value,
+                            img: imgEl.value
+                        });
+                    }
+                });
+                config._team = team;
+                
+                // Récupération de la galerie
+                const gallery = [];
+                document.querySelectorAll('#gallery-container > div').forEach(g => {
+                    const imgEl = g.querySelector('.gallery-img');
+                    const altEl = g.querySelector('.gallery-alt');
+                    if (imgEl && altEl) {
+                        gallery.push({
+                            img: imgEl.value,
+                            alt: altEl.value
+                        });
+                    }
+                });
+                config._gallery = gallery;
+                
+                // Récupération FAQ
+                const faq = [];
+                document.querySelectorAll('#faq-container > div').forEach(f => {
+                    const qEl = f.querySelector('.faq-q');
+                    const aEl = f.querySelector('.faq-a');
+                    if (qEl && aEl) {
+                        faq.push({
+                            question: qEl.value,
+                            answer: aEl.value
+                        });
+                    }
+                });
+                config._faq = faq;
+                
+                // Ajout de métadonnées de sécurité
+                const configString = JSON.stringify({
+                    version: '20.2',
+                    timestamp: Date.now(),
+                    signature: btoa('IAXIUM-CONFIG-' + Date.now()),
+                    data: config
+                }, null, 2);
+                
+                // Copie dans le presse-papier
+                navigator.clipboard.writeText(configString).then(() => {
+                    showToast('💾 Configuration copiée ! Sauvegardez-la dans un fichier .txt');
+                }).catch(() => {
+                    // Fallback: téléchargement direct
+                    const blob = new Blob([configString], {type: 'application/json'});
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = 'mirage-config-' + Date.now() + '.json';
+                    a.click();
+                    showToast('💾 Configuration téléchargée !');
+                });
+            } catch (err) {
+                showToast('❌ Erreur lors de l\'export');
+                console.error(err);
+            }
+        }
+
+        // IMPORT DE CONFIGURATION
+        function importConfig() {
+            const code = prompt('🔐 COLLEZ VOTRE CODE DE CONFIGURATION ICI :\n\n(Le code commence par { et finit par })');
+            
+            if (!code || code.trim() === '') {
+                showToast('❌ Aucun code fourni');
+                return;
+            }
+            
+            try {
+                // SÉCURITÉ : Validation JSON stricte
+                let configObj;
+                try {
+                    configObj = JSON.parse(code);
+                } catch (e) {
+                    showToast('❌ Code invalide : format JSON incorrect');
+                    return;
+                }
+                
+                // SÉCURITÉ : Vérification de la structure
+                if (!configObj.version || !configObj.data || !configObj.signature) {
+                    showToast('❌ Code invalide : structure incorrecte');
+                    return;
+                }
+                
+                // SÉCURITÉ : Vérification de la version
+                if (!configObj.version.startsWith('20.')) {
+                    if (!confirm('⚠️ Ce code provient d\'une version différente. Continuer ?')) {
+                        return;
+                    }
+                }
+                
+                // SÉCURITÉ : Vérification de la signature
+                try {
+                    const sig = atob(configObj.signature);
+                    if (!sig.startsWith('IAXIUM-CONFIG-')) {
+                        showToast('❌ Signature invalide');
+                        return;
+                    }
+                } catch (e) {
+                    showToast('❌ Signature corrompue');
+                    return;
+                }
+                
+                const config = configObj.data;
+                
+                // Restauration des inputs, textareas, checkboxes
+                Object.keys(config).forEach(key => {
+                    if (key.startsWith('_')) return; // Skip special keys
+                    const el = document.getElementById(key);
+                    if (el) {
+                        if (el.type === 'checkbox') {
+                            el.checked = config[key];
+                        } else {
+                            // SÉCURITÉ : Sanitization basique
+                            let value = config[key];
+                            if (typeof value === 'string') {
+                                // Limite de longueur pour éviter DoS
+                                value = value.substring(0, 10000);
+                            }
+                            el.value = value;
+                        }
+                    }
+                });
+                
+                // Restauration des services
+                if (config._services && Array.isArray(config._services)) {
+                    const container = document.getElementById('services-container');
+                    container.innerHTML = '';
+                    config._services.forEach(s => {
+                        addService();
+                        const lastDiv = container.lastElementChild;
+                        lastDiv.querySelector('.s-title').value = s.title || '';
+                        lastDiv.querySelector('.s-img').value = s.img || '';
+                        lastDiv.querySelector('.s-desc').value = s.desc || '';
+                    });
+                }
+                
+                // Restauration des avis
+                if (config._avis && Array.isArray(config._avis)) {
+                    const container = document.getElementById('avis-container');
+                    container.innerHTML = '';
+                    config._avis.forEach(a => {
+                        addAvis();
+                        const lastDiv = container.lastElementChild;
+                        lastDiv.querySelector('.a-name').value = a.name || '';
+                        lastDiv.querySelector('.a-img').value = a.img || '';
+                        lastDiv.querySelector('.a-star').value = a.stars || '5';
+                        lastDiv.querySelector('.a-text').value = a.text || '';
+                    });
+                }
+                
+                // Restauration de l'équipe
+                if (config._team && Array.isArray(config._team)) {
+                    const container = document.getElementById('team-container');
+                    container.innerHTML = '';
+                    config._team.forEach(t => {
+                        addTeam();
+                        const lastDiv = container.lastElementChild;
+                        lastDiv.querySelector('.team-name').value = t.name || '';
+                        lastDiv.querySelector('.team-role').value = t.role || '';
+                        lastDiv.querySelector('.team-img').value = t.img || '';
+                    });
+                }
+                
+                // Restauration de la galerie
+                if (config._gallery && Array.isArray(config._gallery)) {
+                    const container = document.getElementById('gallery-container');
+                    container.innerHTML = '';
+                    config._gallery.forEach(g => {
+                        addGallery();
+                        const lastDiv = container.lastElementChild;
+                        lastDiv.querySelector('.gallery-img').value = g.img || '';
+                        lastDiv.querySelector('.gallery-alt').value = g.alt || '';
+                    });
+                }
+                
+                // Restauration FAQ
+                if (config._faq && Array.isArray(config._faq)) {
+                    const container = document.getElementById('faq-container');
+                    container.innerHTML = '';
+                    config._faq.forEach(f => {
+                        addFaq();
+                        const lastDiv = container.lastElementChild;
+                        lastDiv.querySelector('.faq-q').value = f.question || '';
+                        lastDiv.querySelector('.faq-a').value = f.answer || '';
+                    });
+                }
+                
+                // Re-render
+                render();
+                showToast('✅ Configuration chargée avec succès !');
+                
+            } catch (err) {
+                showToast('❌ Erreur lors de l\'import : ' + err.message);
+                console.error(err);
+            }
+        }
+
+        // AUTO-SAVE dans localStorage toutes les 5 secondes
+        setInterval(() => {
+            try {
+                const config = {};
+                document.querySelectorAll('input, textarea, select').forEach(el => {
+                    if (el.id && !el.classList.contains('s-title') && !el.classList.contains('a-name') && !el.classList.contains('team-name') && !el.classList.contains('gallery-img') && !el.classList.contains('faq-q')) {
+                        if (el.type === 'checkbox') {
+                            config[el.id] = el.checked;
+                        } else if (el.value) {
+                            config[el.id] = el.value;
+                        }
+                    }
+                });
+                localStorage.setItem('iaxium_autosave', JSON.stringify(config));
+            } catch (e) {
+                console.warn('Auto-save impossible:', e);
+            }
+        }, 5000);
+
+        window.onload = () => {
+            // AUTO-RESTORE depuis localStorage
+            try {
+                const saved = localStorage.getItem('iaxium_autosave');
+                if (saved) {
+                    const config = JSON.parse(saved);
+                    Object.keys(config).forEach(key => {
+                        const el = document.getElementById(key);
+                        if (el) {
+                            if (el.type === 'checkbox') {
+                                el.checked = config[key];
+                            } else {
+                                el.value = config[key];
+                            }
+                        }
+                    });
+                    console.log('✅ Configuration restaurée automatiquement');
+                }
+            } catch (e) {
+                console.warn('Auto-restore impossible:', e);
+            }
+            
+            const hoursList = document.getElementById('hours-list');
+            if (hoursList) {
+                days.forEach((d, idx) => {
+                    hoursList.innerHTML += `
+                        <div class="card-opt" style="padding: 10px 14px; margin-bottom: 8px;">
+                            <div class="flex justify-between items-center">
+                                <span style="font-size: 11px; font-weight: 700; opacity: 0.6; text-transform: uppercase; letter-spacing: 0.05em;">${d}</span>
+                                <input type="text" id="h_${d}" class="input-dark" style="width: 140px !important; margin-bottom: 0; padding: 8px 12px; font-size: 12px;" value="09:00 - 19:00" oninput="render()">
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            
+            // Premier rendu après restauration
+            setTimeout(() => render(), 500);
+        };
+    </script>
+</body>
+</html>

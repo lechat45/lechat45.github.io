@@ -6,7 +6,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/scrollreveal"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -364,10 +363,7 @@
             <button onclick="importConfig()" class="flex-1 py-2 px-4 rounded-xl font-bold text-xs uppercase" style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; cursor: pointer; transition: transform 0.2s;">
                 <span style="margin-right: 4px;">📥</span>Charger
             </button>
-            <button onclick="shareURL()" class="flex-1 py-2 px-4 rounded-xl font-bold text-xs uppercase" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; border: none; cursor: pointer; transition: transform 0.2s;" title="Générer un lien partageable">
-                <span style="margin-right: 4px;">🔗</span>Partager
-            </button>
-            <button onclick="if(confirm('Effacer l\'auto-sauvegarde ?')) { localStorage.removeItem('iaxium_autosave'); showToast('🗑️ Auto-save effacée'); }" class="py-2 px-3 rounded-xl font-bold text-xs" style="background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; cursor: pointer;">
+            <button onclick="if(confirm('Effacer l\'auto-sauvegarde ?')) { localStorage.removeItem('mirage_autosave'); showToast('🗑️ Auto-save effacée'); }" class="py-2 px-3 rounded-xl font-bold text-xs" style="background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; cursor: pointer;">
                 🗑️
             </button>
         </div>
@@ -1035,7 +1031,7 @@ Support VIP
         
         // Popup de licence au chargement
         window.addEventListener('DOMContentLoaded', () => {
-            const licenseAccepted = localStorage.getItem('iaxium_license_accepted');
+            const licenseAccepted = localStorage.getItem('mirage_license_accepted');
             if (!licenseAccepted) {
                 setTimeout(showLicensePopup, 100);
             } else {
@@ -1060,7 +1056,7 @@ Support VIP
                         <div style="font-size: 13px; line-height: 1.8; opacity: 0.8; text-align: left;">
                             <p style="margin-bottom: 12px;">✓ <strong>Licence :</strong> Code source propriétaire © Sacha Pellerin</p>
                             <p style="margin-bottom: 12px;">✓ <strong>Usage :</strong> Les sites générés vous appartiennent</p>
-                            <p style="margin-bottom: 12px;">✓ <strong>Crédit obligatoire :</strong> La ligne "Design par iAxium & design" doit rester dans le footer</p>
+                            <p style="margin-bottom: 12px;">✓ <strong>Crédit obligatoire :</strong> La ligne "Développement Mirage développement & design" doit rester dans le footer</p>
                             <p style="margin-bottom: 12px;">✓ <strong>Interdiction :</strong> Revente, redistribution ou modification du générateur</p>
                             <p style="margin-bottom: 12px;">✓ <strong>Support :</strong> sacha.pellerin.45@gmail.com</p>
                             <p style="margin-top: 16px; padding: 12px; background: rgba(251, 191, 36, 0.1); border-left: 3px solid #fbbf24; border-radius: 6px; font-size: 12px;">
@@ -1082,26 +1078,18 @@ Support VIP
             document.body.appendChild(popup);
             
             // Ajouter les event listeners
-            const acceptBtn = document.getElementById('accept-btn');
-            const declineBtn = document.getElementById('decline-btn');
+            document.getElementById('accept-btn').addEventListener('click', function() {
+                localStorage.setItem('mirage_license_accepted', 'true');
+                document.getElementById('license-popup').remove();
+                initializeApp();
+                showToast('✅ Licence acceptée ! Bienvenue sur iAxium');
+            });
             
-            if (acceptBtn) {
-                acceptBtn.addEventListener('click', function() {
-                    localStorage.setItem('iaxium_license_accepted', 'true');
-                    const popup = document.getElementById('license-popup');
-                    if (popup) popup.remove();
-                    initializeApp();
-                    showToast('✅ Licence acceptée ! Bienvenue sur iAxium');
-                });
-            }
-            
-            if (declineBtn) {
-                declineBtn.addEventListener('click', function() {
-                    if (confirm('⚠️ Vous devez accepter les conditions pour utiliser iAxium. Voulez-vous vraiment quitter ?')) {
-                        window.location.href = 'about:blank';
-                    }
-                });
-            }
+            document.getElementById('decline-btn').addEventListener('click', function() {
+                if (confirm('⚠️ Vous devez accepter les conditions pour utiliser iAxium. Voulez-vous vraiment quitter ?')) {
+                    window.location.href = 'about:blank';
+                }
+            });
         }
         
         function initializeApp() {
@@ -1233,59 +1221,46 @@ Support VIP
             render();
         }
         
-        function setMode(m) {
-            const wrapper = document.getElementById('preview-wrapper');
-            if (wrapper) {
-                wrapper.className = m === 'mobile' ? 'mode-mobile' : '';
-            }
+        function setMode(m) { 
+            document.getElementById('preview-wrapper').className = m === 'mobile' ? 'mode-mobile' : ''; 
         }
         
         function switchTab(t) {
             document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            
-            const tab = document.getElementById('tab-'+t);
-            const btn = document.getElementById('btn-'+t);
-            
-            if (tab) tab.classList.remove('hidden');
-            if (btn) btn.classList.add('active');
+            document.getElementById('tab-'+t).classList.remove('hidden');
+            document.getElementById('btn-'+t).classList.add('active');
         }
 
         function addService() {
-            const container = document.getElementById('services-container');
-            if (!container) return;
-            
             const d = document.createElement('div'); 
             d.className = 'card-opt';
             d.style.borderColor = 'rgba(56, 189, 248, 0.2)';
             d.innerHTML = `
-                <div style="margin-bottom: 8px; font-size: 10px; opacity: 0.6; text-transform: uppercase; font-weight: 700;">Service #${container.children.length + 1}</div>
+                <div style="margin-bottom: 8px; font-size: 10px; opacity: 0.6; text-transform: uppercase; font-weight: 700;">Service #${document.querySelectorAll('#services-container > div').length + 1}</div>
                 <input type="text" class="input-dark s-title" placeholder="📝 Titre du service">
                 <input type="text" class="input-dark s-img" placeholder="🖼️ Image URL">
                 <textarea class="input-dark s-desc" placeholder="📄 Description détaillée du service..."></textarea>
             `;
             d.querySelectorAll('input, textarea').forEach(i => i.oninput = render);
-            container.appendChild(d); 
+            document.getElementById('services-container').appendChild(d); 
             render();
         }
 
         function addAvis() {
-            const container = document.getElementById('avis-container');
-            if (!container) return;
-            
             const d = document.createElement('div'); 
             d.className = 'card-opt';
             d.style.borderColor = 'rgba(168, 85, 247, 0.3)';
             d.style.background = 'linear-gradient(135deg, rgba(168, 85, 247, 0.05) 0%, rgba(147, 51, 234, 0.05) 100%)';
             d.innerHTML = `
-                <div style="margin-bottom: 8px; font-size: 10px; opacity: 0.6; text-transform: uppercase; font-weight: 700; color: #a855f7;">Avis Client #${container.children.length + 1}</div>
+                <div style="margin-bottom: 8px; font-size: 10px; opacity: 0.6; text-transform: uppercase; font-weight: 700; color: #a855f7;">Avis Client #${document.querySelectorAll('#avis-container > div').length + 1}</div>
                 <input type="text" class="input-dark a-name" placeholder="👤 Nom du client">
                 <input type="text" class="input-dark a-img" placeholder="🖼️ Photo URL">
                 <input type="number" class="input-dark a-star" placeholder="⭐ Étoiles (1-5)" value="5" min="0" max="5">
                 <textarea class="input-dark a-text" placeholder="💬 Avis détaillé du client..."></textarea>
             `;
             d.querySelectorAll('input, textarea').forEach(i => i.oninput = render);
-            container.appendChild(d); 
+            document.getElementById('avis-container').appendChild(d); 
             render();
         }
 
@@ -1298,7 +1273,7 @@ Support VIP
         }
 
         let renderTimeout;
-        let autoRenderEnabled = true; // Mode auto-rendu activé par défaut
+        let autoRenderEnabled = false; // Mode MANUEL par défaut // Mode auto-rendu activé par défaut
         
         function handleInput() {
             if (autoRenderEnabled) {
@@ -1325,8 +1300,6 @@ Support VIP
         function toggleAutoRender() {
             autoRenderEnabled = !autoRenderEnabled;
             const btn = document.getElementById('toggle-auto-render');
-            if (!btn) return;
-            
             if (autoRenderEnabled) {
                 btn.textContent = '⏸️ Mode Manuel';
                 btn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
@@ -1565,27 +1538,24 @@ Support VIP
         }` : ''}
         .hero { height: 100vh; background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('${vUrl('hero_img')}') center/cover; position: relative; ${document.getElementById('opt_parallax') && document.getElementById('opt_parallax').checked ? 'background-attachment: fixed;' : ''} }
         .logo-capsule { 
-            background: white; 
+            background: rgba(255,255,255,0.05); 
             backdrop-filter: blur(20px); 
             border-radius: 100px; 
-            padding: 15px 30px; 
+            padding: 6px 20px; 
             display: inline-flex; 
             align-items: center; 
             justify-content: center;
-            border: 1px solid rgba(255,255,255,0.2);
-            height: 70px;
-            min-width: 150px;
-            max-width: 280px;
+            border: 1px solid rgba(255,255,255,0.1);
+            height: 50px;
+            max-width: 200px;
             overflow: hidden;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
         }
         .logo-capsule img { 
             height: 100%;
             width: auto;
             max-width: 100%;
-            max-height: 100%;
             object-fit: contain;
-            object-position: center;
+            border-radius: 100px;
         }
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); ${document.getElementById('opt_rounded_design') && document.getElementById('opt_rounded_design').checked ? 'border-radius: 24px;' : 'border-radius: 8px;'} }
         ${document.getElementById('opt_hover_3d') && document.getElementById('opt_hover_3d').checked ? `
@@ -1937,7 +1907,7 @@ Support VIP
             ${v('contact_address') ? `<p>📍 ${v('contact_address')}</p>` : ''}
             ${v('contact_phone_display') ? `<p>📞 ${v('contact_phone_display')}</p>` : ''}
         </div>` : ''}
-        <p class="text-[11px] opacity-50 font-bold uppercase mt-6" id="mirage-credit" data-integrity="MGR-${btoa('Mirage-2025-Sacha-Pellerin')}">Design par iAxium & design - Contactez-nous : sacha.pellerin.45@gmail.com</p>
+        <p class="text-[11px] opacity-50 font-bold uppercase mt-6" id="mirage-credit" data-integrity="MGR-${btoa('Mirage-2025-Sacha-Pellerin')}">Développement Mirage développement & design - Contactez-nous : sacha.pellerin.45@gmail.com</p>
         ${document.getElementById('opt_auto_copyright') && document.getElementById('opt_auto_copyright').checked ? `<p class="text-[10px] opacity-40 mt-2">© <span id="year">${new Date().getFullYear()}</span> Tous droits réservés</p>` : ''}
     </footer>
 
@@ -2203,7 +2173,7 @@ Support VIP
         
         // Protection du crédit Mirage (vérifie l'intégrité) - EXTRÊMEMENT DIFFICILE À RETIRER
         (function() {
-            const _0x4a2b = ['mirage-credit', 'getElementById', 'textContent', 'iAxium', 'sacha.pellerin.45@gmail.com', 'includes', 'body', 'innerHTML'];
+            const _0x4a2b = ['mirage-credit', 'getElementById', 'textContent', 'Mirage développement', 'sacha.pellerin.45@gmail.com', 'includes', 'body', 'innerHTML'];
             const checkIntegrity = () => {
                 const el = document[_0x4a2b[1]](_0x4a2b[0]);
                 if (!el || !el[_0x4a2b[2]][_0x4a2b[5]](_0x4a2b[3]) || !el[_0x4a2b[2]][_0x4a2b[5]](_0x4a2b[4])) {
@@ -2428,7 +2398,7 @@ Support VIP
                 const configString = JSON.stringify({
                     version: '20.2',
                     timestamp: Date.now(),
-                    signature: btoa('IAXIUM-CONFIG-' + Date.now()),
+                    signature: btoa('MIRAGE-IA-CONFIG-' + Date.now()),
                     data: config
                 }, null, 2);
                 
@@ -2485,7 +2455,7 @@ Support VIP
                 // SÉCURITÉ : Vérification de la signature
                 try {
                     const sig = atob(configObj.signature);
-                    if (!sig.startsWith('IAXIUM-CONFIG-')) {
+                    if (!sig.startsWith('MIRAGE-IA-CONFIG-')) {
                         showToast('❌ Signature invalide');
                         return;
                     }
@@ -2589,74 +2559,6 @@ Support VIP
             }
         }
 
-        // PARTAGE VIA URL
-        function shareURL() {
-            try {
-                const config = {};
-                
-                // Récupération config complète (simplifié)
-                document.querySelectorAll('input, textarea, select').forEach(el => {
-                    if (el.id && !el.classList.contains('s-title') && !el.classList.contains('a-name')) {
-                        if (el.type === 'checkbox') {
-                            config[el.id] = el.checked;
-                        } else if (el.value) {
-                            config[el.id] = el.value;
-                        }
-                    }
-                });
-                
-                // Compression et encodage
-                const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(config));
-                const shareURL = window.location.origin + window.location.pathname + '?config=' + compressed;
-                
-                // Copier dans le presse-papier
-                navigator.clipboard.writeText(shareURL).then(() => {
-                    showToast('🔗 Lien copié ! Partagez-le pour garder votre configuration');
-                    
-                    // Afficher le lien
-                    alert('✅ Lien de partage copié !\n\nVotre configuration sera automatiquement chargée depuis ce lien :\n\n' + shareURL);
-                }).catch(() => {
-                    // Fallback si clipboard API non disponible
-                    prompt('🔗 Copiez ce lien pour partager votre configuration:', shareURL);
-                });
-                
-            } catch (e) {
-                console.error('Erreur shareURL:', e);
-                showToast('❌ Erreur lors de la génération du lien');
-            }
-        }
-        
-        function loadFromURL() {
-            try {
-                const urlParams = new URLSearchParams(window.location.search);
-                const configParam = urlParams.get('config');
-                
-                if (configParam) {
-                    // Décompression
-                    const decompressed = LZString.decompressFromEncodedURIComponent(configParam);
-                    const config = JSON.parse(decompressed);
-                    
-                    // Application de la config
-                    Object.keys(config).forEach(key => {
-                        const el = document.getElementById(key);
-                        if (el) {
-                            if (el.type === 'checkbox') {
-                                el.checked = config[key];
-                            } else {
-                                el.value = config[key];
-                            }
-                        }
-                    });
-                    
-                    showToast('✅ Configuration chargée depuis l\'URL !');
-                    forceRender();
-                }
-            } catch (e) {
-                console.error('Erreur loadFromURL:', e);
-                showToast('⚠️ Erreur lors du chargement de la configuration');
-            }
-        }
-
         // AUTO-SAVE dans localStorage toutes les 5 secondes
         setInterval(() => {
             try {
@@ -2670,56 +2572,49 @@ Support VIP
                         }
                     }
                 });
-                localStorage.setItem('iaxium_autosave', JSON.stringify(config));
+                localStorage.setItem('mirage_autosave', JSON.stringify(config));
             } catch (e) {
                 console.warn('Auto-save impossible:', e);
             }
         }, 5000);
 
         window.onload = () => {
-            // CHARGEMENT DEPUIS URL (prioritaire sur localStorage)
-            loadFromURL();
-            
-//             // AUTO-RESTORE depuis localStorage (si pas d'URL)
-//             try {
-//                 const urlParams = new URLSearchParams(window.location.search);
-//                 if (!urlParams.has('config')) {
-//                     const saved = localStorage.getItem('iaxium_autosave');
-//                     if (saved) {
-//                         const config = JSON.parse(saved);
-//                         Object.keys(config).forEach(key => {
-//                             const el = document.getElementById(key);
-//                             if (el) {
-//                                 if (el.type === 'checkbox') {
-//                                     el.checked = config[key];
-//                                 } else {
-//                                     el.value = config[key];
-//                                 }
-//                             }
-//                         }
-//                         });
-//                         console.log('✅ Configuration restaurée automatiquement');
-//                     }
-//                 }
-//             } catch (e) {
-//                 console.warn('Auto-restore impossible:', e);
-//             }
-            
-            const hoursList = document.getElementById('hours-list');
-            if (hoursList) {
-                days.forEach((d, idx) => {
-                    hoursList.innerHTML += `
-                        <div class="card-opt" style="padding: 10px 14px; margin-bottom: 8px;">
-                            <div class="flex justify-between items-center">
-                                <span style="font-size: 11px; font-weight: 700; opacity: 0.6; text-transform: uppercase; letter-spacing: 0.05em;">${d}</span>
-                                <input type="text" id="h_${d}" class="input-dark" style="width: 140px !important; margin-bottom: 0; padding: 8px 12px; font-size: 12px;" value="09:00 - 19:00" oninput="render()">
-                            </div>
-                        </div>
-                    `;
-                });
+            // AUTO-RESTORE depuis localStorage
+            try {
+                const saved = localStorage.getItem('mirage_autosave');
+                if (saved) {
+                    const config = JSON.parse(saved);
+                    Object.keys(config).forEach(key => {
+                        const el = document.getElementById(key);
+                        if (el) {
+                            if (el.type === 'checkbox') {
+                                el.checked = config[key];
+                            } else {
+                                el.value = config[key];
+                            }
+                        }
+                    });
+                    console.log('✅ Configuration restaurée automatiquement');
+                }
+            } catch (e) {
+                console.warn('Auto-restore impossible:', e);
             }
             
+            days.forEach((d, idx) => {
+            const hoursList = document.getElementById('hours-list');
+            if (hoursList) {
+                document.getElementById('hours-list').innerHTML += `
+                    <div class="card-opt" style="padding: 10px 14px; margin-bottom: 8px;">
+                        <div class="flex justify-between items-center">
+                            <span style="font-size: 11px; font-weight: 700; opacity: 0.6; text-transform: uppercase; letter-spacing: 0.05em;">${d}</span>
+                            <input type="text" id="h_${d}" class="input-dark" style="width: 140px !important; margin-bottom: 0; padding: 8px 12px; font-size: 12px;" value="09:00 - 19:00" oninput="render()">
+                        </div>
+                    </div>
+                `;
+            });
+            
             // Premier rendu après restauration
+            }
             setTimeout(() => render(), 500);
         };
     </script>

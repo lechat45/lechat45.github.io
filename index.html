@@ -1,20 +1,12 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-9XW13XFH1Y"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-9XW13XFH1Y');
-</script>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>iAxium - v21.0 Generator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/scrollreveal"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -371,6 +363,9 @@
             </button>
             <button onclick="importConfig()" class="flex-1 py-2 px-4 rounded-xl font-bold text-xs uppercase" style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; cursor: pointer; transition: transform 0.2s;">
                 <span style="margin-right: 4px;">📥</span>Charger
+            </button>
+            <button onclick="shareURL()" class="flex-1 py-2 px-4 rounded-xl font-bold text-xs uppercase" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; border: none; cursor: pointer; transition: transform 0.2s;" title="Générer un lien partageable">
+                <span style="margin-right: 4px;">🔗</span>Partager
             </button>
             <button onclick="if(confirm('Effacer l\'auto-sauvegarde ?')) { localStorage.removeItem('iaxium_autosave'); showToast('🗑️ Auto-save effacée'); }" class="py-2 px-3 rounded-xl font-bold text-xs" style="background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; cursor: pointer;">
                 🗑️
@@ -1570,24 +1565,27 @@ Support VIP
         }` : ''}
         .hero { height: 100vh; background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('${vUrl('hero_img')}') center/cover; position: relative; ${document.getElementById('opt_parallax') && document.getElementById('opt_parallax').checked ? 'background-attachment: fixed;' : ''} }
         .logo-capsule { 
-            background: rgba(255,255,255,0.05); 
+            background: white; 
             backdrop-filter: blur(20px); 
             border-radius: 100px; 
-            padding: 6px 20px; 
+            padding: 15px 30px; 
             display: inline-flex; 
             align-items: center; 
             justify-content: center;
-            border: 1px solid rgba(255,255,255,0.1);
-            height: 50px;
-            max-width: 200px;
+            border: 1px solid rgba(255,255,255,0.2);
+            height: 70px;
+            min-width: 150px;
+            max-width: 280px;
             overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
         }
         .logo-capsule img { 
             height: 100%;
             width: auto;
             max-width: 100%;
+            max-height: 100%;
             object-fit: contain;
-            border-radius: 100px;
+            object-position: center;
         }
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); ${document.getElementById('opt_rounded_design') && document.getElementById('opt_rounded_design').checked ? 'border-radius: 24px;' : 'border-radius: 8px;'} }
         ${document.getElementById('opt_hover_3d') && document.getElementById('opt_hover_3d').checked ? `
@@ -2591,6 +2589,74 @@ Support VIP
             }
         }
 
+        // PARTAGE VIA URL
+        function shareURL() {
+            try {
+                const config = {};
+                
+                // Récupération config complète (simplifié)
+                document.querySelectorAll('input, textarea, select').forEach(el => {
+                    if (el.id && !el.classList.contains('s-title') && !el.classList.contains('a-name')) {
+                        if (el.type === 'checkbox') {
+                            config[el.id] = el.checked;
+                        } else if (el.value) {
+                            config[el.id] = el.value;
+                        }
+                    }
+                });
+                
+                // Compression et encodage
+                const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(config));
+                const shareURL = window.location.origin + window.location.pathname + '?config=' + compressed;
+                
+                // Copier dans le presse-papier
+                navigator.clipboard.writeText(shareURL).then(() => {
+                    showToast('🔗 Lien copié ! Partagez-le pour garder votre configuration');
+                    
+                    // Afficher le lien
+                    alert('✅ Lien de partage copié !\n\nVotre configuration sera automatiquement chargée depuis ce lien :\n\n' + shareURL);
+                }).catch(() => {
+                    // Fallback si clipboard API non disponible
+                    prompt('🔗 Copiez ce lien pour partager votre configuration:', shareURL);
+                });
+                
+            } catch (e) {
+                console.error('Erreur shareURL:', e);
+                showToast('❌ Erreur lors de la génération du lien');
+            }
+        }
+        
+        function loadFromURL() {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const configParam = urlParams.get('config');
+                
+                if (configParam) {
+                    // Décompression
+                    const decompressed = LZString.decompressFromEncodedURIComponent(configParam);
+                    const config = JSON.parse(decompressed);
+                    
+                    // Application de la config
+                    Object.keys(config).forEach(key => {
+                        const el = document.getElementById(key);
+                        if (el) {
+                            if (el.type === 'checkbox') {
+                                el.checked = config[key];
+                            } else {
+                                el.value = config[key];
+                            }
+                        }
+                    });
+                    
+                    showToast('✅ Configuration chargée depuis l\'URL !');
+                    forceRender();
+                }
+            } catch (e) {
+                console.error('Erreur loadFromURL:', e);
+                showToast('⚠️ Erreur lors du chargement de la configuration');
+            }
+        }
+
         // AUTO-SAVE dans localStorage toutes les 5 secondes
         setInterval(() => {
             try {
@@ -2611,26 +2677,33 @@ Support VIP
         }, 5000);
 
         window.onload = () => {
-            // AUTO-RESTORE depuis localStorage
-            try {
-                const saved = localStorage.getItem('iaxium_autosave');
-                if (saved) {
-                    const config = JSON.parse(saved);
-                    Object.keys(config).forEach(key => {
-                        const el = document.getElementById(key);
-                        if (el) {
-                            if (el.type === 'checkbox') {
-                                el.checked = config[key];
-                            } else {
-                                el.value = config[key];
-                            }
-                        }
-                    });
-                    console.log('✅ Configuration restaurée automatiquement');
-                }
-            } catch (e) {
-                console.warn('Auto-restore impossible:', e);
-            }
+            // CHARGEMENT DEPUIS URL (prioritaire sur localStorage)
+            loadFromURL();
+            
+//             // AUTO-RESTORE depuis localStorage (si pas d'URL)
+//             try {
+//                 const urlParams = new URLSearchParams(window.location.search);
+//                 if (!urlParams.has('config')) {
+//                     const saved = localStorage.getItem('iaxium_autosave');
+//                     if (saved) {
+//                         const config = JSON.parse(saved);
+//                         Object.keys(config).forEach(key => {
+//                             const el = document.getElementById(key);
+//                             if (el) {
+//                                 if (el.type === 'checkbox') {
+//                                     el.checked = config[key];
+//                                 } else {
+//                                     el.value = config[key];
+//                                 }
+//                             }
+//                         }
+//                         });
+//                         console.log('✅ Configuration restaurée automatiquement');
+//                     }
+//                 }
+//             } catch (e) {
+//                 console.warn('Auto-restore impossible:', e);
+//             }
             
             const hoursList = document.getElementById('hours-list');
             if (hoursList) {
